@@ -277,6 +277,11 @@ body {
   justify-content: center;
   transition: opacity 0.5s;
 }
+#loadingOverlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
 #loadingSpinner {
   border: 8px solid #eee3;
   border-top: 8px solid var(--highlight-color);
