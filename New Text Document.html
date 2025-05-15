@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="loadingOverlay">
+    <div id="loadingSpinner"></div>
+  </div>
+  <header>
+    <nav class="navbar">
+      <div class="logo">ปวช 1 | 1</div>
+      <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home" class="active" onclick="navigateMenu(event, 'home')">Home</a></li>
+        <li><a href="#กลางบ้าน" onclick="navigateMenu(event, 'กลางบ้าน')">กลางบ้าน</a></li>
+        <li><a href="#ตารางเรียน" onclick="navigateMenu(event, 'ตารางเรียน')">ตารางเรียน</a></li>
+        <li><a href="#แจ้งฝ่ายsupport" onclick="navigateMenu(event, 'แจ้งฝ่ายsupport')">แจ้งฝ่าย support</a></li>
+      </ul>
+      <div class="ปวช-icon">
+        <img src="img/e38f146c-126a-455f-957e-f48ada93bc86photo.png.jpg" alt="ปวช" />
+      </div>
+    </nav>
+  </header>
+
+  <section id="home" class="hero page-section">
+    <div class="content">
+      <div class="intro">
+        <p class="hello">สวัสดีโลก ฉันคือ</p>
+        <h1>เว็บไซต์ของเรา</h1>
+        <h2>อันนี้คือเว็บไซต์สำหรับ ปวช.1/1</h2>
+        <p>ยินดีต้อนรับเข้าสู่เว็บไซต์ของพวกเรา👋🏻</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="กลางบ้าน" class="hero page-section" style="display:none;">
+    <div class="content">
+      <div class="intro">
+        <h1>กลางบ้าน</h1>
+        <p>อัปโหลดรูปภาพหรือไฟล์ของคุณ:</p>
+        <input type="file" id="homeworkFile" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx" multiple>
+        <div id="uploadedImagePreview" style="margin-top:1rem;">
+        </div>
+        <textarea id="homeworkText" rows="3" style="width:100%;max-width:320px;margin-top:1rem;" placeholder="เขียนข้อความหรือคำอธิบาย..."></textarea>
+        <button class="link-btn" style="margin-top:1rem;" onclick="addHomework()">เพิ่มข้อมูล</button>
+        <div id="homeworkList" style="margin-top:1.5rem;"></div>
+      </div>
+    </div>
+  </section>
+  <section id="ตารางเรียน" class="hero page-section" style="display:none;">
+    <div class="content">
+      <div class="intro">
+        <h1>ตารางเรียน</h1>
+        <div id="scheduleImagePreview" style="margin-top:1rem;">
+          <img
+            src="img/ตารางเรียน.png"
+            alt="ตารางเรียน"
+            class="schedule-img"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="แจ้งฝ่ายsupport" class="hero page-section" style="display:none;">
+    <div class="content">
+      <div class="intro">
+        <h1>แจ้งฝ่าย support</h1>
+        <textarea id="supportMsg" rows="4" style="width:100%;max-width:400px;" placeholder="แจ้งปัญหาหรือข้อเสนอแนะ..."></textarea>
+        <button class="link-btn" onclick="sendSupport()">ส่งแจ้งปัญหา</button>
+        <div id="supportStatus" style="margin-top:1rem;"></div>
+      </div>
+    </div>
+  </section>
+
+  <button class="toggle-btn-fixed" id="toggleThemeBtn" onclick="toggleTheme()" aria-label="Toggle Theme"></button>
+
+  <script src="script.js"></script>
+</body>
+</html>
