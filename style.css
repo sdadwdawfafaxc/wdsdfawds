@@ -1,0 +1,159 @@
+:root {
+  --bg: #0e0e0e;
+  --text: #fff;
+  --highlight: #facc15;
+  --card: #1f1f1f;
+}
+
+.light-mode {
+  --bg: #fffbe9;
+  --text: #222;
+  --highlight: #ff9800;
+  --card: #f3f4f6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  transition: background .3s,color .3s;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: var(--card);
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.hamburger span {
+  height: 4px;
+  width: 28px;
+  background: var(--highlight);
+  margin: 4px 0;
+  border-radius: 2px;
+}
+
+@media (max-width: 900px) {
+  .nav-links {
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: -220px;
+    width: 200px;
+    height: 100vh;
+    z-index: 1000;
+    transition: right .3s;
+  }
+  .nav-links.open {
+    right: 0;
+  }
+  .hamburger {
+    display: flex;
+  }
+}
+
+.profile-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid var(--highlight);
+}
+
+.page-section {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.page-section.show {
+  display: flex;
+}
+
+.intro {
+  max-width: 400px;
+}
+
+#loadingOverlay {
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .5s;
+}
+
+#loadingOverlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#loadingSpinner {
+  border: 8px solid #eee3;
+  border-top: 8px solid var(--highlight);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.toggle-btn-fixed {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 1200;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--highlight);
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.schedule-img {
+  max-width: 100%;
+  border-radius: 16px;
+  border: 4px dashed var(--highlight);
+}
+
+.no-data {
+  color: #aaa;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  display: block;
+}
