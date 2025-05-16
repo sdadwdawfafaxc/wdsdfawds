@@ -119,22 +119,3 @@ function showDefaultScheduleImage() {
     preview.innerHTML = '<span class="no-data">ยังไม่มีข้อมูล</span>';
   }
 }
-
-function sendSupport() {
-  const msg = document.getElementById('supportMsg').value.trim();
-  if (!msg) {
-    document.getElementById('supportStatus').textContent = "กรุณากรอกข้อความ";
-    return;
-  }
-  const blob = new Blob([msg], {type: "text/plain"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = "support-message.txt";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  document.getElementById('supportStatus').textContent = "ส่งข้อความสำเร็จ (ไฟล์ถูกดาวน์โหลด)";
-  document.getElementById('supportMsg').value = "";
-}
