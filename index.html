@@ -1,55 +1,42 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>วิลัย ดิจิทัลกราฟิก ปวช 1/1</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คลังการบ้าน 📚</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <div id="loadingOverlay"><div id="loadingSpinner"></div></div>
-  <nav class="navbar">
-    <div class="logo">ดิจิทัลกราฟิก 1 | 1</div>
-    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-      <span></span><span></span><span></span>
-    </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#home" class="active" onclick="navigateMenu(event,'home')">Home</a></li>
-      <li><a href="#กลางบ้าน" onclick="navigateMenu(event,'กลางบ้าน')">กลางบ้าน</a></li>
-      <li><a href="#ตารางเรียน" onclick="navigateMenu(event,'ตารางเรียน')">ตารางเรียน</a></li>
-      <li><a href="#แจ้งฝ่ายsupport" onclick="navigateMenu(event,'แจ้งฝ่ายsupport')">แจ้งฝ่าย support</a></li>
-    </ul>
-    <img src="img/e38f146c-126a-455f-957e-f48ada93bc86photo.png.jpg" alt="ปวช" class="profile-icon" />
-  </nav>
-  <section id="home" class="page-section show">
-    <div class="intro">
-      <p class="hello">สวัสดีโลก ฉันคือ</p>
-      <h1>เว็บไซต์ของเรา</h1>
-      <h2>อันนี้คือเว็บไซต์สำหรับ ดิจิทัลกราฟิก ปวช.1/1</h2>
-      <p>ยินดีต้อนรับเข้าสู่เว็บไซต์ของพวกเรา👋🏻</p>
-    </div>
-  </section>
-  <section id="กลางบ้าน" class="page-section">
-    <div class="intro">
-      <h1>กลางบ้าน</h1>
-      <h2>ไม่มีข้อมูล<h2>
-        <img src="img/received_1567527457514476.jpeg">
-    </div>
-  </section>
-  <section id="ตารางเรียน" class="page-section">
-    <div class="intro">
-      <h1>ตารางเรียน</h1>
-      <div id="scheduleImagePreview">
-        <img src="img/ตารางเรียน.png" alt="ตารางเรียน" class="schedule-img" loading="lazy" />
+  <div class="container">
+    <header>
+      <h1>คลังการบ้าน 📚</h1>
+      <div class="actions">
+        <button id="addHomeworkBtn" type="button">➕ เพิ่มการบ้าน</button>
+        <button id="downloadBtn" type="button">💾 ดาวน์โหลดข้อมูล</button>
+        <button id="uploadBtn" type="button">📂 อัปโหลดข้อมูล</button>
+        <input type="file" id="uploadFile" accept="application/json" style="display:none" />
       </div>
+    </header>
+
+    <section id="homeworkList" class="grid" aria-live="polite"></section>
+  </div>
+
+  <div id="modal" class="modal hidden" aria-modal="true" role="dialog">
+    <div class="modal-content">
+      <h2>เพิ่มการบ้านใหม่</h2>
+      <form id="homeworkForm" autocomplete="off">
+        <input type="text" id="title" placeholder="ชื่อการบ้าน" required />
+        <textarea id="description" placeholder="รายละเอียดการบ้าน" required></textarea>
+        <input type="date" id="dueDate" required />
+        <input type="file" id="image" accept="image/*" required />
+        <div class="form-actions">
+          <button type="submit">บันทึก</button>
+          <button type="button" id="cancelBtn">ยกเลิก</button>
+        </div>
+      </form>
     </div>
-  </section>
-  <section id="แจ้งฝ่ายsupport" class="page-section">
-    <div class="intro">
-      <h1>แจ้งฝ่าย support</h1>
-      <h2>ใช้ไม่ได้อยู่ในช่วงเวลาหมดอายุ</h2>
-    </div>
-  </section>
-  <script src="script.js"></script>
+  </div>
 </body>
 </html>
