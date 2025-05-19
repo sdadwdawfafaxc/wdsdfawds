@@ -1,121 +1,126 @@
-window.addEventListener('load', function() {
-  const overlay = document.getElementById('loadingOverlay');
-  overlay.classList.add('fade-out');
-  setTimeout(() => {
-    overlay.style.display = 'none';
-  }, 500);
-});
+const addBtn = document.getElementById('addHomeworkBtn');
+const modal = document.getElementById('modal');
+const cancelBtn = document.getElementById('cancelBtn');
+const homeworkForm = document.getElementById('homeworkForm');
+const homeworkList = document.getElementById('homeworkList');
+const downloadBtn = document.getElementById('downloadBtn');
+const uploadBtn = document.getElementById('uploadBtn');
+const uploadFile = document.getElementById('uploadFile');
 
-function updateToggleBtn() {
-  const btn = document.getElementById('toggleThemeBtn');
-  btn.textContent = document.body.classList.contains('light-mode') ? "☀️" : "🌙";
+let homeworkData = [];
+
+function saveToLocal() {
+  localStorage.setItem('homeworkData', JSON.stringify(homeworkData));
 }
-function toggleTheme() {
-  document.body.classList.toggle('light-mode');
-  updateToggleBtn();
-}
-document.addEventListener('DOMContentLoaded', updateToggleBtn);
 
-function toggleMenu() {
-  document.getElementById('navLinks').classList.toggle('open');
-}
-document.addEventListener('click', function(e) {
-  const nav = document.getElementById('navLinks');
-  const ham = document.getElementById('hamburger');
-  if (window.innerWidth <= 900 && nav.classList.contains('open')) {
-    if (!nav.contains(e.target) && !ham.contains(e.target)) {
-      nav.classList.remove('open');
-    }
-  }
-});
-
-function navigateMenu(event, sectionId) {
-  event.preventDefault();
-  document.querySelectorAll('.page-section').forEach(sec => sec.style.display = 'none');
-  const section = document.getElementById(sectionId);
-  if (section) section.style.display = 'flex';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-  document.getElementById('navLinks').classList.remove('open');
-
-  if(sectionId === 'กลางบ้าน') showDefaultHomeworkImages();
-  if(sectionId === 'ตารางเรียน') showDefaultScheduleImage();
-}
-document.addEventListener('DOMContentLoaded', () => {
-  showDefaultHomeworkImages();
-  showDefaultScheduleImage();
-});
-
-function addHomework() {
-  const files = document.getElementById('homeworkFile').files;
-  const text = document.getElementById('homeworkText').value.trim();
-  const list = document.getElementById('homeworkList');
-  let hasData = false;
-
-  if (list.querySelector('.no-data')) list.innerHTML = '';
-
-  if (files.length > 0) {
-    hasData = true;
-    for (let file of files) {
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          img.loading = "lazy";
-          img.style.maxWidth = '220px';
-          img.style.margin = '8px 0';
-          img.style.borderRadius = '12px';
-          img.style.boxShadow = '0 2px 8px #0003';
-          img.alt = file.name;
-          img.classList.add('pop-animate');
-          list.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        const fileDiv = document.createElement('div');
-        fileDiv.textContent = `📄 ${file.name}`;
-        fileDiv.style.margin = '8px 0';
-        fileDiv.classList.add('pop-animate');
-        list.appendChild(fileDiv);
+function loadFromLocal() {
+  const data = localStorage.getItem('homeworkData');
+  if (data) {
+    try {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        homeworkData = parsed;
       }
+    } catch (e) {
+      homeworkData = [];
     }
   }
-
-  if (text) {
-    hasData = true;
-    const p = document.createElement('div');
-    p.textContent = `💬 ${text}`;
-    p.style.margin = '8px 0';
-    p.style.background = '#fff3';
-    p.style.padding = '8px 12px';
-    p.style.borderRadius = '8px';
-    p.classList.add('pop-animate');
-    list.appendChild(p);
-  }
-
-  if (!hasData && list.children.length === 0) {
-    list.innerHTML = '<span class="no-data">ยังไม่มีข้อมูล</span>';
-  }
-
-  document.getElementById('homeworkFile').value = '';
-  document.getElementById('homeworkText').value = '';
 }
 
-function showDefaultHomeworkImages() {
-  const preview = document.getElementById('uploadedImagePreview');
-  const list = document.getElementById('homeworkList');
-  if (!preview.hasChildNodes() || preview.innerHTML.trim() === '') {
-    preview.innerHTML = '<span class="no-data">ยังไม่มีข้อมูล</span>';
-  }
-  if (!list.hasChildNodes() || list.innerHTML.trim() === '') {
-    list.innerHTML = '<span class="no-data">ยังไม่มีข้อมูล</span>';
-  }
+function renderHomework() {
+  homeworkList.innerHTML = '';
+  if (!Array.isArray(homeworkData)) homeworkData = [];
+  const fragment = document.createDocumentFragment();
+  homeworkData.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img src="${item.image || ''}" alt="homework image">
+      <h3>${item.title || ''}</h3>
+      <p>${item.description || ''}</p>
+      <small>ส่งภายใน: ${item.dueDate || ''}</small>
+    `;
+    fragment.appendChild(card);
+  });
+  homeworkList.appendChild(fragment);
+  saveToLocal();
 }
 
-function showDefaultScheduleImage() {
-  const preview = document.getElementById('scheduleImagePreview');
-  if (!preview.hasChildNodes() || preview.innerHTML.trim() === '') {
-    preview.innerHTML = '<span class="no-data">ยังไม่มีข้อมูล</span>';
-  }
-}
+addBtn.addEventListener('click', () => {
+  modal.classList.remove('hidden');
+});
+
+cancelBtn.addEventListener('click', () => {
+  modal.classList.add('hidden');
+});
+
+homeworkForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const title = document.getElementById('title').value;
+  const description = document.getElementById('description').value;
+  const dueDate = document.getElementById('dueDate').value;
+  const imageFile = document.getElementById('image').files[0];
+
+  if (!imageFile) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const newHomework = {
+      title,
+      description,
+      dueDate,
+      image: event.target.result
+    };
+
+    homeworkData.push(newHomework);
+    renderHomework();
+
+    modal.classList.add('hidden');
+    homeworkForm.reset();
+  };
+
+  reader.readAsDataURL(imageFile);
+});
+
+downloadBtn.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(homeworkData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'homework-data.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+uploadBtn.addEventListener('click', () => {
+  uploadFile.click();
+});
+
+uploadFile.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      if (Array.isArray(importedData)) {
+        homeworkData = importedData;
+        renderHomework();
+      } else {
+        alert('ไฟล์ไม่ถูกต้อง');
+      }
+    } catch (error) {
+      alert('เกิดข้อผิดพลาดในการโหลดไฟล์');
+    }
+  };
+
+  reader.readAsText(file);
+});
+
+loadFromLocal();
+renderHomework();
