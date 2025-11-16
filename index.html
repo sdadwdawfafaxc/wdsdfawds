@@ -1,36 +1,37 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="th">
  <head>
+  <link rel="icon" type="image/png" href="image/ima1ge.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจัดการนักเรียนและคะแนน</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>nexus group orion</title>
+  <link rel="stylesheet" href="assets/css/tailwind.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
  </head>
  <body class="min-h-full">
-  <!-- Login Screen -->
   <div id="login-screen" class="min-h-full flex items-center justify-center safe-area-top safe-area-bottom responsive-padding">
    <div class="dark-glass neon-glow rounded-2xl responsive-padding w-full modal-responsive card-hover">
     <div class="text-center responsive-margin">
-     <div class="mx-auto w-16 h-16 glass-effect rounded-full flex items-center justify-center mb-6"><span class="text-2xl">🎓</span>
+     <div class="mx-auto w-40 h-40 logo-badge flex items-center justify-center mb-6">
+      <img src="image/image.png" alt="Orion logo" class="w-36 h-36 object-contain">
      </div>
      <h1 id="login-title" class="text-2xl font-bold text-white mb-3">ระบบจัดการนักศึกษา</h1>
-     <p class="text-slate-300">เลือกประเภทการเข้าสู่ระบบ</p><!-- Data Status Indicator -->
+     <p class="text-slate-300">เลือกประเภทการเข้าสู่ระบบ</p>
      <div class="mt-4 flex justify-center">
       <div id="data-status" class="data-saved">
        💾 ข้อมูลพร้อมใช้งาน
       </div>
      </div>
-    </div><!-- Login Type Selection -->
+    </div>
     <div class="responsive-margin">
      <div class="grid grid-cols-1 sm:grid-cols-2 rounded-xl glass-effect p-1 gap-1"><button type="button" id="student-tab" class="btn-responsive rounded-lg font-medium transition-all bg-blue-600 text-white shadow-sm font-semibold touch-friendly hover:bg-blue-700"> 🎮 Minecraft Username </button> <button type="button" id="admin-tab" class="btn-responsive rounded-lg font-medium transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-100 touch-friendly"> 🎓 อาจารย์ </button>
      </div>
-    </div><!-- Student Login Form -->
+    </div>
     <form id="student-login-form" class="login-form form-mobile">
      <div class="responsive-margin"><label for="student-login-name" class="block responsive-text font-semibold text-white mb-2 sm:mb-3">🎮 Username</label> <input type="text" id="student-login-name" required class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center responsive-text text-white placeholder-slate-400 border-0 touch-friendly font-medium" placeholder="กรอก Username ของคุณ">
      </div><button type="submit" id="student-login-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center shadow-sm touch-friendly"> <span>🎮 เข้าสู่ระบบ</span>
       <div id="student-login-loading" class="loading-spinner ml-2 hidden"></div></button>
-    </form><!-- Admin Login Form -->
+    </form>
     <form id="admin-login-form" class="login-form form-mobile hidden">
      <div class="responsive-margin"><label for="admin-password" class="block responsive-text font-semibold text-white mb-2 sm:mb-3">รหัสอาจารย์</label> <input type="password" id="admin-password" required class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center responsive-text text-white placeholder-slate-400 border-0 touch-friendly font-medium" placeholder="กรอกรหัสอาจารย์">
      </div><button type="submit" id="admin-login-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center shadow-sm touch-friendly"> <span>🎓 เข้าสู่ระบบอาจารย์</span>
@@ -44,7 +45,7 @@
     </div>
    </div>
   </div>
-  <!-- Registration Screen -->
+
   <div id="registration-screen" class="hidden min-h-full flex items-center justify-center safe-area-top safe-area-bottom responsive-padding">
    <div class="dark-glass neon-glow rounded-2xl responsive-padding w-full modal-responsive card-hover">
     <div class="text-center responsive-margin">
@@ -54,15 +55,15 @@
      <p class="responsive-text text-slate-300 font-medium">กรอกข้อมูลเพิ่มเติมเพื่อเข้าสู่ระบบ</p>
      <p id="minecraft-username-display" class="responsive-text text-blue-400 font-bold mt-2">🎮 Minecraft: -</p>
     </div>
-    <form id="registration-form" class="form-mobile"><!-- ชื่อ-นามสกุล -->
+    <form id="registration-form" class="form-mobile">
      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 responsive-margin">
       <div><label for="first-name" class="block responsive-text font-semibold text-white mb-2">ชื่อ</label> <input type="text" id="first-name" required class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 border-0 touch-friendly font-medium" placeholder="กรอกชื่อ">
       </div>
       <div><label for="last-name" class="block responsive-text font-semibold text-white mb-2">นามสกุล</label> <input type="text" id="last-name" required class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 border-0 touch-friendly font-medium" placeholder="กรอกนามสกุล">
       </div>
-     </div><!-- เลือกบ้าน -->
+     </div>
      <div class="responsive-margin"><label class="block responsive-text font-semibold text-white mb-3 sm:mb-4">🏠 เลือกบ้านของคุณ</label>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"><!-- บ้านเฮเดส -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
        <div class="house-option" data-house="hades"><input type="radio" id="house-hades" name="house" value="hades" class="hidden" required> <label for="house-hades" class="block cursor-pointer touch-friendly">
          <div class="glass-effect rounded-xl responsive-padding text-center transition-all duration-300 hover:bg-black/20 border-2 border-transparent hover:border-black">
           <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">
@@ -70,7 +71,7 @@
           </div>
           <h3 class="responsive-subtitle font-bold text-white">เฮเดส</h3>
          </div></label>
-       </div><!-- บ้านเซเรส -->
+       </div>
        <div class="house-option" data-house="ceres"><input type="radio" id="house-ceres" name="house" value="ceres" class="hidden" required> <label for="house-ceres" class="block cursor-pointer touch-friendly">
          <div class="glass-effect rounded-xl responsive-padding text-center transition-all duration-300 hover:bg-white/20 border-2 border-transparent hover:border-white">
           <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">
@@ -80,7 +81,7 @@
          </div></label>
        </div>
       </div>
-     </div><!-- บทบาทเริ่มต้น (ไม่สามารถเลือกได้) -->
+     </div>
      <div class="responsive-margin"><label class="block responsive-text font-semibold text-white mb-3 sm:mb-4">🎭 บทบาทของคุณ</label>
       <div class="glass-effect rounded-xl responsive-padding text-center border-2 border-blue-500 bg-blue-50">
        <div class="text-2xl sm:text-3xl mb-2">
@@ -88,7 +89,7 @@
        </div>
        <h4 class="responsive-text font-bold text-white">นักเรียนทั่วไป</h4>
        <p class="text-xs text-slate-300 mt-1">บทบาทเริ่มต้น - อาจารย์สามารถมอบบทบาทพิเศษให้ภายหลัง</p>
-      </div><!-- Hidden input for form submission --> <input type="hidden" name="role" value="normal" required>
+      </div> <input type="hidden" name="role" value="normal" required>
      </div>
      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4"><button type="button" id="back-to-login" class="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 touch-friendly"> ← กลับ </button> <button type="submit" id="register-button" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center touch-friendly"> <span>✅ ลงทะเบียน</span>
        <div id="register-loading" class="loading-spinner ml-2 hidden"></div></button>
@@ -102,20 +103,20 @@
     </div>
    </div>
   </div>
-  <!-- Student View -->
+
   <div id="student-view" class="hidden safe-area-top safe-area-bottom">
-   <div class="responsive-container responsive-padding landscape-compact"><!-- Student Header -->
+   <div class="responsive-container responsive-padding landscape-compact">
     <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center responsive-margin">
      <div class="mb-4 sm:mb-0">
       <h1 class="responsive-title font-bold text-white mb-2">👨‍🎓 ข้อมูลนักศึกษา</h1>
-      <p class="responsive-text text-slate-300 font-medium">ดูข้อมูลและคะแนนของคุณ (เฉพาะดูเท่านั้น)</p><!-- Data Sync Status -->
+      <p class="responsive-text text-slate-300 font-medium">ดูข้อมูลและคะแนนของคุณ (เฉพาะดูเท่านั้น)</p>
       <div class="mt-2 flex items-center gap-2">
        <div id="student-data-status" class="data-saved">
         💾 ข้อมูลซิงค์แล้ว
        </div><span id="student-last-update" class="text-xs text-slate-400"> อัปเดต: กำลังโหลด... </span>
       </div>
      </div><button id="student-logout-button" class="bg-red-500 hover:bg-red-600 text-white font-semibold btn-responsive rounded-lg transition duration-200 touch-friendly w-full sm:w-auto"> ออกจากระบบ </button>
-    </header><!-- Student Info Card -->
+    </header>
     <div class="bg-gray-800 rounded-xl shadow-lg responsive-padding responsive-margin border border-gray-600">
      <div class="text-center">
       <div id="student-house-icon" class="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mb-3 sm:mb-4"><span class="text-2xl sm:text-3xl">🎮</span>
@@ -124,16 +125,16 @@
       <p id="student-minecraft-name" class="responsive-subtitle text-blue-400 mb-2 font-bold">🎮 Minecraft: -</p>
       <p id="student-house-display" class="responsive-text text-gray-300 mb-2 sm:mb-3 font-semibold">🏠 บ้าน: -</p>
       <p id="student-role-display" class="responsive-text text-gray-300 mb-3 sm:mb-4 font-semibold">🎭 บทบาท: -</p>
-      <p id="student-id-display" class="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-6 font-mono break-all">UUID: -</p><!-- Score Display -->
+      <p id="student-id-display" class="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-6 font-mono break-all">UUID: -</p>
       <div class="bg-gray-700 rounded-xl responsive-padding border border-gray-600">
        <h3 class="responsive-subtitle font-bold text-white mb-3 sm:mb-4">คะแนนของคุณ</h3>
        <div class="flex items-center justify-center"><span id="student-score" class="text-4xl sm:text-6xl font-bold text-blue-400">0</span> <span class="responsive-subtitle text-gray-300 ml-2 font-semibold">คะแนน</span>
        </div>
-       <div id="student-rank" class="mt-3 sm:mt-4"><!-- Ranking will be displayed here -->
+      <div id="student-rank" class="mt-3 sm:mt-4">
        </div>
       </div>
      </div>
-    </div><!-- Class Statistics -->
+    </div>
     <div class="bg-gray-800 rounded-xl shadow-lg responsive-padding border border-gray-600">
      <h3 class="responsive-subtitle font-bold text-white mb-3 sm:mb-4">สถิติของชั้น</h3>
      <div class="auto-grid-sm">
@@ -153,9 +154,9 @@
     </div>
    </div>
   </div>
-  <!-- Teacher View (Limited Permissions) -->
+  
   <div id="teacher-view" class="hidden min-h-full p-6">
-   <div class="max-w-7xl mx-auto"><!-- Header -->
+   <div class="max-w-7xl mx-auto">
     <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
      <div class="mb-4 lg:mb-0">
       <h1 class="text-3xl font-bold text-white mb-2">🎓 ระบบจัดการนักศึกษา (อาจารย์)</h1>
@@ -173,7 +174,7 @@
      </div>
      <div class="flex gap-3"><button id="teacher-backup-button" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 💾 สำรองข้อมูล </button> <button id="super-admin-login-button" class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 👑 Admin </button> <button id="teacher-logout-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> ออกจากระบบ </button>
      </div>
-    </header><!-- Statistics Cards -->
+    </header>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
      <div class="dark-glass p-6">
       <div class="flex items-center">
@@ -215,25 +216,25 @@
        </div>
       </div>
      </div>
-    </div><!-- Data Management Section -->
+    </div>
     <div class="dark-glass p-6 mb-8">
      <h2 class="text-2xl font-semibold text-white mb-4">💾 จัดการข้อมูลถาวร</h2>
      <p class="text-slate-300 mb-6">ระบบบันทึกข้อมูลทุกการเปลี่ยนแปลงแบบถาวร สามารถสำรอง กู้คืน และจัดการได้</p>
      <div class="grid grid-cols-1 md:grid-cols-3 gap-4"><button id="view-all-transactions-button" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📋 ดูประวัติทั้งหมด <span id="all-transactions-count" class="bg-white/20 px-2 py-1 rounded-full text-sm">0</span> </button> <button id="export-data-button" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📤 ส่งออกข้อมูล </button> <button id="import-data-button" class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📥 นำเข้าข้อมูล </button>
      </div>
-    </div><!-- Individual Score Management Section -->
+    </div>
     <div class="dark-glass p-6 mb-8">
      <h2 class="text-2xl font-semibold text-white mb-4">📊 จัดการคะแนนรายบุคคล</h2>
-     <p class="text-slate-300 mb-6">คลิกที่ชื่อนักศึกษาเพื่อจัดการคะแนนและเงิน (บันทึกถาวรทุกการเปลี่ยนแปลง)</p><!-- Individual Score Cards -->
-     <div id="teacher-score-cards-container" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"><!-- Score cards will be rendered here -->
-     </div><!-- Empty State for Score Cards -->
+     <p class="text-slate-300 mb-6">คลิกที่ชื่อนักศึกษาเพื่อจัดการคะแนนและเงิน (บันทึกถาวรทุกการเปลี่ยนแปลง)</p>
+     <div id="teacher-score-cards-container" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+     </div>
      <div id="teacher-score-cards-empty" class="text-center py-12">
       <div class="flex flex-col items-center"><span class="text-6xl mb-4">👥</span>
        <p class="text-xl text-white mb-2">ยังไม่มีข้อมูลนักศึกษา</p>
        <p class="text-slate-400">รอให้นักศึกษาลงทะเบียนเข้าสู่ระบบ</p>
       </div>
      </div>
-    </div><!-- Students List -->
+    </div>
     <div class="dark-glass overflow-hidden">
      <div class="p-6 border-b border-slate-600">
       <div class="flex justify-between items-center">
@@ -269,9 +270,9 @@
     </div>
    </div>
   </div>
-  <!-- Super Admin View (Full Permissions) -->
+  
   <div id="admin-view" class="hidden min-h-full p-6">
-   <div class="max-w-7xl mx-auto"><!-- Header -->
+   <div class="max-w-7xl mx-auto">
     <header class="flex justify-between items-center mb-8">
      <div>
       <h1 class="text-4xl font-bold text-white mb-3">👑 ระบบจัดการนักศึกษา - Super Admin</h1>
@@ -289,7 +290,7 @@
      </div>
      <div class="flex gap-3"><button id="admin-backup-button" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"> 💾 สำรองข้อมูล </button> <button id="admin-logout-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"> ออกจากระบบ </button>
      </div>
-    </header><!-- Statistics Cards -->
+    </header>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
      <div class="dark-glass p-6">
       <div class="flex items-center">
@@ -331,7 +332,7 @@
        </div>
       </div>
      </div>
-    </div><!-- Data Management Section -->
+    </div>
     <div class="dark-glass rounded-2xl p-8 mb-8 super-admin-glow">
      <h2 class="text-3xl font-semibold gradient-text mb-6">💾 จัดการข้อมูลถาวรขั้นสูง</h2>
      <p class="text-slate-300 mb-6">ระบบบันทึกข้อมูลทุกการเปลี่ยนแปลงแบบถาวร สามารถสำรอง กู้คืน แก้ไข และลบได้</p>
@@ -388,9 +389,9 @@
     </div>
     <div class="dark-glass rounded-2xl p-8 mb-8 super-admin-glow">
      <h2 class="text-3xl font-semibold gradient-text mb-6">📊 จัดการคะแนนรายบุคคล</h2>
-     <p class="text-slate-300 mb-6">คลิกที่ชื่อนักศึกษาเพื่อจัดการคะแนนและเงิน (บันทึกถาวรทุกการเปลี่ยนแปลง)</p><!-- Individual Score Cards -->
-     <div id="admin-score-cards-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4"><!-- Score cards will be rendered here -->
-     </div><!-- Empty State for Score Cards -->
+     <p class="text-slate-300 mb-6">คลิกที่ชื่อนักศึกษาเพื่อจัดการคะแนนและเงิน (บันทึกถาวรทุกการเปลี่ยนแปลง)</p>
+     <div id="admin-score-cards-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+     </div>
      <div id="admin-score-cards-empty" class="text-center py-12">
       <div class="flex flex-col items-center">
        <svg class="w-16 h-16 text-slate-500 mb-6 floating-animation" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
@@ -439,7 +440,7 @@
     </div>
    </div>
   </div>
-  <!-- Super Admin Login Modal -->
+  
   <div id="super-admin-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
    <div class="dark-glass super-admin-glow rounded-2xl shadow-2xl responsive-padding modal-responsive">
     <div class="text-center responsive-margin">
@@ -462,16 +463,16 @@
      </div>
     </div>
    </div>
-  </div><!-- Data Management Modal -->
+  </div>
   <div id="data-management-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-   <div class="dark-glass rounded-2xl shadow-2xl w-full max-w-6xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
+  <div class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-5xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
     <div class="flex items-center justify-between p-6 border-b border-slate-600">
      <div>
       <h3 class="text-2xl font-bold gradient-text">💾 จัดการข้อมูลถาวร</h3>
       <p class="text-slate-300 mt-1">ดู แก้ไข ลบ และจัดการข้อมูลทั้งหมดในระบบ</p>
      </div><button onclick="closeDataManagementModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"> ✕ ปิด </button>
     </div>
-    <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]"><!-- Data Filter Section -->
+    <div class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]">
      <div class="mb-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
       <div><label for="data-type-filter" class="block text-sm font-medium text-slate-300 mb-2">📊 ประเภทข้อมูล</label> <select id="data-type-filter" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white"> <option value="">ทั้งหมด</option> <option value="student">👥 ข้อมูลนักศึกษา</option> <option value="transaction">💸 ประวัติการทำรายการ</option> <option value="backup">💾 ข้อมูลสำรอง</option> </select>
       </div>
@@ -479,8 +480,8 @@
       </div>
       <div class="flex items-end"><button id="refresh-data-list" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 🔄 รีเฟรชข้อมูล </button>
       </div>
-     </div><!-- Data List -->
-     <div id="data-management-list" class="space-y-4"><!-- Data items will be rendered here -->
+     </div>
+     <div id="data-management-list" class="space-y-4">
      </div>
      <div id="data-management-empty" class="text-center py-12 text-slate-400 hidden">
       <div class="text-6xl mb-4">
@@ -492,42 +493,42 @@
     </div>
    </div>
   </div>
-  <!-- Edit Data Modal -->
+  
   <div id="edit-data-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-   <div class="bg-gray-800 rounded-xl shadow-2xl p-6 w-full max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
+  <div class="bg-gray-800 rounded-xl shadow-2xl p-6 w-[92vw] sm:w-[86vw] md:w-[78vw] max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
     <h3 class="text-xl font-semibold text-white mb-4">✏️ แก้ไขข้อมูล</h3>
-    <div id="edit-data-form"><!-- Dynamic form will be rendered here -->
+    <div id="edit-data-form">
     </div>
     <div class="flex gap-4 mt-6"><button id="save-data-button" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"> <span>💾 บันทึก</span>
       <div id="save-data-loading" class="loading-spinner ml-2 hidden"></div></button> <button id="cancel-edit-data" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"> ยกเลิก </button>
     </div>
    </div>
-  </div><!-- Backup & Restore Modal -->
+  </div>
   <div id="backup-restore-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-   <div class="dark-glass rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
+  <div class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-4xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
     <div class="flex items-center justify-between p-6 border-b border-slate-600">
      <div>
       <h3 class="text-2xl font-bold gradient-text">💾 สำรองและกู้คืนข้อมูล</h3>
       <p class="text-slate-300 mt-1">จัดการการสำรองข้อมูลและกู้คืนระบบ</p>
      </div><button onclick="closeBackupRestoreModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"> ✕ ปิด </button>
     </div>
-    <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]"><!-- Backup Section -->
+    <div class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]">
      <div class="backup-section mb-6">
       <h4 class="text-xl font-semibold text-white mb-4">📤 สำรองข้อมูล</h4>
       <p class="text-slate-300 mb-4">สร้างไฟล์สำรองข้อมูลทั้งหมดในระบบ</p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><button id="create-full-backup" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 💾 สำรองข้อมูลทั้งหมด </button> <button id="create-students-backup" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 👥 สำรองข้อมูลนักศึกษา </button>
       </div>
-     </div><!-- Restore Section -->
+     </div>
      <div class="backup-section backup-warning mb-6">
       <h4 class="text-xl font-semibold text-white mb-4">📥 กู้คืนข้อมูล</h4>
       <p class="text-slate-300 mb-4">นำเข้าข้อมูลจากไฟล์สำรอง (จะเขียนทับข้อมูลเดิม)</p>
       <div class="mb-4"><input type="file" id="restore-file-input" accept=".json" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent text-white">
       </div><button id="restore-data-button" class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📥 กู้คืนข้อมูล 
        <div id="restore-loading" class="loading-spinner ml-2 hidden"></div></button>
-     </div><!-- Backup History -->
+     </div>
      <div class="backup-section">
       <h4 class="text-xl font-semibold text-white mb-4">📋 ประวัติการสำรอง</h4>
-      <div id="backup-history-list" class="space-y-3"><!-- Backup history will be rendered here -->
+      <div id="backup-history-list" class="space-y-3">
       </div>
       <div id="backup-history-empty" class="text-center py-8 text-slate-400">
        <div class="text-4xl mb-2">
@@ -539,18 +540,18 @@
     </div>
    </div>
   </div>
-  <!-- Quick Score Management Modal -->
+  
   <div id="quick-score-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
    <div class="dark-glass rounded-2xl shadow-2xl responsive-padding modal-responsive neon-glow">
     <div class="text-center responsive-margin">
      <h3 id="quick-modal-title" class="responsive-subtitle font-bold text-white mb-2">จัดการคะแนนและเงิน</h3>
-     <p id="quick-modal-subtitle" class="responsive-text text-slate-300 break-words">-</p><!-- Data Status -->
+     <p id="quick-modal-subtitle" class="responsive-text text-slate-300 break-words">-</p>
      <div class="mt-2 flex justify-center">
       <div id="quick-data-status" class="data-saved">
        💾 บันทึกถาวร
       </div>
      </div>
-    </div><!-- Current Stats -->
+    </div>
     <div class="grid grid-cols-2 gap-3 sm:gap-4 responsive-margin">
      <div class="glass-effect rounded-xl responsive-padding text-center">
       <div id="quick-current-score" class="text-2xl sm:text-3xl font-bold text-blue-400 mb-1">
@@ -623,17 +624,17 @@
     </div>
    </div>
   </div>
-  <!-- Transaction History Modal -->
+  
   <div id="transaction-history-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-   <div class="dark-glass rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
+  <div class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-4xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
     <div class="flex items-center justify-between p-6 border-b border-slate-600">
      <div>
       <h3 class="text-2xl font-bold gradient-text">📋 ประวัติการทำรายการ</h3>
       <p id="transaction-history-subtitle" class="text-slate-300 mt-1">ประวัติการเปลี่ยนแปลงคะแนนและเงิน</p>
      </div><button onclick="closeTransactionHistoryModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"> ✕ ปิด </button>
     </div>
-    <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-     <div id="transaction-history-list" class="space-y-4"><!-- Transaction history will be rendered here -->
+    <div class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]">
+     <div id="transaction-history-list" class="space-y-4">
      </div>
      <div id="transaction-history-empty" class="text-center py-12 text-slate-400 hidden">
       <div class="text-6xl mb-4">
@@ -644,16 +645,16 @@
      </div>
     </div>
    </div>
-  </div><!-- Admin Transaction Management Modal -->
+  </div>
   <div id="admin-transaction-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-   <div class="dark-glass rounded-2xl shadow-2xl w-full max-w-6xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
+  <div class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-5xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
     <div class="flex items-center justify-between p-6 border-b border-slate-600">
      <div>
       <h3 class="text-2xl font-bold gradient-text">👑 จัดการประวัติการทำรายการ (Admin)</h3>
       <p class="text-slate-300 mt-1">Admin สามารถแก้ไข ลบ และจัดการประวัติทั้งหมด</p>
      </div><button onclick="closeAdminTransactionModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"> ✕ ปิด </button>
     </div>
-    <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]"><!-- Filter Section -->
+    <div class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]">
      <div class="mb-6 grid grid-cols-1 lg:grid-cols-4 gap-4">
       <div><label for="admin-transaction-type-filter" class="block text-sm font-medium text-slate-300 mb-2">📊 ประเภทรายการ</label> <select id="admin-transaction-type-filter" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white"> <option value="">ทั้งหมด</option> <option value="deduct">💸 หักเงิน</option> <option value="reduce">💚 ลดเงิน</option> <option value="reset">🔄 รีเซ็ต</option> <option value="score_change">📊 เปลี่ยนคะแนน</option> </select>
       </div>
@@ -706,7 +707,7 @@
        </div>
       </div>
      </div>
-     <div id="admin-transaction-list" class="space-y-4"><!-- Admin transaction items will be rendered here -->
+     <div id="admin-transaction-list" class="space-y-4">
      </div>
      <div id="admin-transaction-empty" class="text-center py-12 text-slate-400 hidden">
       <div class="text-6xl mb-4">
@@ -718,9 +719,8 @@
     </div>
    </div>
   </div>
-  <!-- Edit Student Modal -->
   <div id="edit-student-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-   <div class="dark-glass rounded-xl shadow-2xl p-6 w-full max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
+  <div class="dark-glass rounded-xl shadow-2xl p-6 w-[92vw] sm:w-[86vw] md:w-[78vw] max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
     <div class="flex items-center justify-between mb-4">
      <div>
       <h3 class="text-xl font-semibold text-white">แก้ไขข้อมูลนักศึกษา</h3>
@@ -854,16 +854,16 @@
     </form>
    </div>
   </div>
-  <!-- Edit Transaction Modal -->
+  
   <div id="edit-transaction-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-   <div class="dark-glass rounded-xl shadow-2xl p-6 w-full max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
+  <div class="dark-glass rounded-xl shadow-2xl p-6 w-[92vw] sm:w-[86vw] md:w-[78vw] max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
     <div class="flex items-center justify-between mb-4">
      <h3 class="text-xl font-semibold text-white">✏️ แก้ไขประวัติการทำรายการ</h3>
      <div class="text-xs text-yellow-400 bg-yellow-900/20 border border-yellow-500/30 rounded px-2 py-1">
       👑 Admin Only
      </div>
     </div>
-    <div id="edit-transaction-form"><!-- Dynamic form will be rendered here -->
+    <div id="edit-transaction-form">
     </div>
     <div class="flex gap-4 mt-6"><button id="save-transaction-button" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"> <span>💾 บันทึกการแก้ไข</span>
       <div id="save-transaction-loading" class="loading-spinner ml-2 hidden"></div></button> <button id="cancel-edit-transaction" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"> ยกเลิก </button>

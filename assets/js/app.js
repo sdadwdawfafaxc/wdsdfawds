@@ -1,4 +1,3 @@
-// Configuration
 const defaultConfig = {
     app_title: "คะแนนของนักศึกษาสถาบัน Orion",
     admin_code_hash: "7dcb48a2a471c0c3b871fff5e85dfdf46f44293f4abb8e00755829535d787229",
@@ -182,83 +181,194 @@ const securityUtils = (() => {
 })();
 
 const googleSheetDataSdk = (() => {
-    let onDataChangedCallback = null;
+    const REQUEST_TIMEOUT_MS = 15000;
+    const RETRY_LIMIT = 2;
+    const CACHE_TTL_MS = 30000;
+    const SOFT_REFRESH_DELAY_MS = 1500;
 
-    async function callAppsScript(action, payload = {}) {
+    let onDataChangedCallback = null;
+    let cachedRecords = [];
+    let lastSyncedAt = 0;
+    let syncInFlight = null;
+    let softRefreshTimer = null;
+    let requestQueue = Promise.resolve();
+
+    function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function enqueue(task) {
+        const next = requestQueue.then(task, task);
+        requestQueue = next.catch(() => {});
+        return next;
+    }
+
+    function notify(records) {
+        if (typeof onDataChangedCallback === "function") {
+            onDataChangedCallback([...(records || [])]);
+        }
+    }
+
+    function flattenSnapshot(data) {
+        const snapshot = data || {};
+        return [
+            ...(snapshot.students || []),
+            ...(snapshot.transactions || []),
+            ...(snapshot.refunds || [])
+        ];
+    }
+
+    function mergeRecord(record) {
+        if (!record) return;
+        const safeRecord = { ...record };
+        if (!safeRecord.__collection) {
+            safeRecord.__collection = resolveCollection(record);
+        }
+        if (!safeRecord.__backendId) {
+            safeRecord.__backendId = `${safeRecord.__collection || "students"}_temp_${Date.now()}`;
+        }
+        const existingIndex = cachedRecords.findIndex(item => item.__backendId === safeRecord.__backendId);
+        if (existingIndex >= 0) {
+            cachedRecords[existingIndex] = safeRecord;
+        } else {
+            cachedRecords.push(safeRecord);
+        }
+        lastSyncedAt = Date.now();
+        notify(cachedRecords);
+    }
+
+    function removeRecord(backendId) {
+        if (!backendId) return;
+        cachedRecords = cachedRecords.filter(item => item.__backendId !== backendId);
+        lastSyncedAt = Date.now();
+        notify(cachedRecords);
+    }
+
+    function scheduleSoftRefresh() {
+        if (softRefreshTimer) {
+            clearTimeout(softRefreshTimer);
+        }
+        softRefreshTimer = setTimeout(() => {
+            softRefreshTimer = null;
+            syncRecords(true).catch(err => console.error("Background resync failed:", err));
+        }, SOFT_REFRESH_DELAY_MS);
+    }
+
+    async function fetchWithTimeout(action, payload, timeoutMs) {
+        const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+        const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+        try {
+            const response = await fetch(googleSheetConfig.scriptUrl, {
+                method: "POST",
+                mode: "cors",
+                headers: { "Content-Type": "text/plain" }, // keep request "simple" to avoid CORS preflight
+                body: JSON.stringify({ action, ...payload }),
+                signal: controller?.signal
+            });
+            const responseText = await response.text().catch(() => "");
+            if (!response.ok) {
+                const statusMessage = [response.status, response.statusText].filter(Boolean).join(" ").trim();
+                const details = responseText ? ` - ${responseText}` : "";
+                throw new Error(`Google Apps Script error: ${statusMessage || "Request failed"}${details}`);
+            }
+            if (!responseText) {
+                throw new Error("Google Apps Script returned an empty response");
+            }
+            let result = null;
+            try {
+                result = JSON.parse(responseText);
+            } catch (parseError) {
+                throw new Error(`Invalid JSON from Apps Script: ${parseError.message}`);
+            }
+            if (!result.success) {
+                throw new Error(result.error || "Unknown Apps Script error");
+            }
+            return result;
+        } finally {
+            if (timer) {
+                clearTimeout(timer);
+            }
+        }
+    }
+
+    async function callAppsScript(action, payload = {}, options = {}) {
         if (!googleSheetConfig.scriptUrl) {
             throw new Error("ยังไม่ได้ตั้งค่า Apps Script URL ใน googleSheetConfig.scriptUrl");
         }
 
-        let response;
-        try {
-            response = await fetch(googleSheetConfig.scriptUrl, {
-                method: "POST",
-                mode: "cors",
-                headers: { "Content-Type": "text/plain" }, // keep request "simple" to avoid CORS preflight
-                body: JSON.stringify({ action, ...payload })
-            });
-        } catch (networkError) {
-            throw new Error(`Network error calling Apps Script (${action}): ${networkError.message}`);
-        }
+        const retries = Number.isFinite(options.retries) ? options.retries : RETRY_LIMIT;
+        const timeoutMs = options.timeoutMs || REQUEST_TIMEOUT_MS;
+        let attempt = 0;
+        let lastError = null;
 
-        const responseText = await response.text().catch(() => "");
-
-        if (!response.ok) {
-            const statusMessage = [response.status, response.statusText].filter(Boolean).join(" ").trim();
-            const details = responseText ? ` - ${responseText}` : "";
-            throw new Error(`Google Apps Script error: ${statusMessage || "Request failed"}${details}`);
-        }
-
-        if (!responseText) {
-            throw new Error("Google Apps Script returned an empty response");
-        }
-
-        let result = null;
-        try {
-            result = JSON.parse(responseText);
-        } catch (parseError) {
-            throw new Error(`Invalid JSON from Apps Script: ${parseError.message}`);
-        }
-
-        if (!result.success) {
-            throw new Error(result.error || "Unknown Apps Script error");
-        }
-        return result;
+        return enqueue(async () => {
+            while (attempt <= retries) {
+                attempt++;
+                try {
+                    return await fetchWithTimeout(action, payload, timeoutMs);
+                } catch (error) {
+                    lastError = error;
+                    if (attempt > retries) break;
+                    await wait(300 * attempt);
+                }
+            }
+            throw lastError || new Error(`Apps Script call failed for action: ${action}`);
+        });
     }
 
-    async function syncRecords() {
-        const result = await callAppsScript("list");
-        const data = result.data || {};
-        const combined = [
-            ...(data.students || []),
-            ...(data.transactions || []),
-            ...(data.refunds || [])
-        ];
-
-        if (typeof onDataChangedCallback === "function") {
-            onDataChangedCallback(combined);
+    async function syncRecords(force = false) {
+        const isCacheFresh = cachedRecords.length > 0 && Date.now() - lastSyncedAt < CACHE_TTL_MS;
+        if (!force && isCacheFresh) {
+            notify(cachedRecords);
+            return { isOk: true, fromCache: true };
+        }
+        if (syncInFlight) {
+            return syncInFlight;
+        }
+        syncInFlight = (async () => {
+            const result = await callAppsScript("list", {}, { retries: 1 });
+            const flattened = flattenSnapshot(result.data);
+            cachedRecords = flattened;
+            lastSyncedAt = Date.now();
+            notify(cachedRecords);
+            return { isOk: true, refreshedAt: lastSyncedAt };
+        })();
+        try {
+            return await syncInFlight;
+        } finally {
+            syncInFlight = null;
         }
     }
 
     return {
         async init(handler) {
             onDataChangedCallback = handler?.onDataChanged || null;
-            await syncRecords();
+            await syncRecords(true);
             return { isOk: true };
         },
         async create(record) {
-            await callAppsScript("create", { record });
-            await syncRecords();
-            return { isOk: true };
+            const result = await callAppsScript("create", { record }, { retries: 3 });
+            const savedRecord = result.data?.record || record;
+            mergeRecord(savedRecord);
+            scheduleSoftRefresh();
+            return { isOk: true, record: savedRecord };
         },
         async update(record) {
-            await callAppsScript("update", { record });
-            await syncRecords();
-            return { isOk: true };
+            const result = await callAppsScript("update", { record }, { retries: 3 });
+            const savedRecord = result.data?.record || record;
+            mergeRecord(savedRecord);
+            scheduleSoftRefresh();
+            return { isOk: true, record: savedRecord };
         },
         async delete(record) {
-            await callAppsScript("delete", { record });
-            await syncRecords();
+            const targetId = record.__backendId;
+            await callAppsScript("delete", { record }, { retries: 2 });
+            removeRecord(targetId);
+            scheduleSoftRefresh();
+            return { isOk: true };
+        },
+        async reload() {
+            await syncRecords(true);
             return { isOk: true };
         }
     };
@@ -277,7 +387,6 @@ function withCollection(record, fallbackCollection) {
     return { ...record, __collection: targetCollection };
 }
 
-// Global variables
 let students = [];
 let allRecords = [];
 let editingStudent = null;
@@ -291,8 +400,10 @@ let teacherTransactions = [];
 let refundHistory = [];
 let backupHistory = [];
 let editingDataRecord = null;
+let autoSyncTimer = null;
+const USERNAME_MIN_LENGTH = 3;
+const USERNAME_MAX_LENGTH = 16;
 
-// Data SDK Handler
 const dataHandler = {
     onDataChanged(data) {
         allRecords = data || [];
@@ -318,19 +429,24 @@ const dataHandler = {
 async function initializeDataSDK() {
     try {
         updateDataStatus('syncing');
+        showPageLoader('กำลังโหลดข้อมูล...');
         if (window.dataSdk) {
             const result = await window.dataSdk.init(dataHandler);
             if (result.isOk) {
                 console.log('Data SDK initialized successfully');
                 updateDataStatus('synced');
+                startAutoSync();
+                hidePageLoader();
             } else {
                 console.error('Failed to initialize Data SDK:', result.error);
                 updateDataStatus('error');
+                hidePageLoader();
             }
         }
     } catch (error) {
         console.error('Error initializing Data SDK:', error);
         updateDataStatus('error');
+        hidePageLoader();
     }
 }
 
@@ -432,6 +548,17 @@ function updateDataStatus(status) {
         }
     });
 }
+function startAutoSync() {
+    if (autoSyncTimer || !window.dataSdk) return;
+    autoSyncTimer = setInterval(async () => {
+        try {
+            await window.dataSdk.reload();
+        } catch (error) {
+            console.error('Auto sync failed:', error);
+            updateDataStatus('error');
+        }
+    }, 5000);
+}
 const minecraftPlayers = [
     { "uuid": "694adebb-93b8-4fe1-a9b4-49e19d930eed", "name": "mintfelicity" },
     { "uuid": "29a4dfad-b181-48ac-9a2b-c06d5cdaf06c", "name": "Kisezz" },
@@ -495,6 +622,24 @@ function hideLoading(buttonId, loadingId) {
     if (loading) loading.classList.add('hidden');
 }
 
+function showPageLoader(message = 'กำลังโหลดข้อมูล...') {
+    const loader = document.getElementById('page-loader');
+    const text = document.getElementById('page-loader-text');
+    if (text && message) {
+        text.textContent = message;
+    }
+    if (loader) {
+        loader.classList.remove('hidden', 'fade-out');
+    }
+}
+
+function hidePageLoader() {
+    const loader = document.getElementById('page-loader');
+    if (!loader) return;
+    loader.classList.add('fade-out');
+    setTimeout(() => loader.classList.add('hidden'), 250);
+}
+
 function showError(errorId, message) {
     const errorDiv = document.getElementById(errorId);
     const messageSpan = document.getElementById(errorId.replace('error', 'error-message'));
@@ -508,6 +653,21 @@ function showError(errorId, message) {
 function hideError(errorId) {
     const errorDiv = document.getElementById(errorId);
     if (errorDiv) errorDiv.classList.add('hidden');
+}
+
+function validateUsername(username, currentBackendId = null) {
+    const name = username?.trim() || '';
+    if (name.length < USERNAME_MIN_LENGTH || name.length > USERNAME_MAX_LENGTH) {
+        return { valid: false, message: `Username ต้องมี ${USERNAME_MIN_LENGTH}-${USERNAME_MAX_LENGTH} ตัวอักษร` };
+    }
+    const duplicate = students.find(s => 
+        s.minecraft_username?.toLowerCase() === name.toLowerCase() &&
+        (!currentBackendId || s.__backendId !== currentBackendId)
+    );
+    if (duplicate) {
+        return { valid: false, message: 'Username นี้ถูกใช้แล้ว' };
+    }
+    return { valid: true };
 }
 
 function getTeacherName() {
@@ -679,6 +839,11 @@ async function registerStudent(formData) {
             showError('registration-error', 'ระบบเต็ม ไม่สามารถลงทะเบียนเพิ่มได้');
             return false;
         }
+        const usernameCheck = validateUsername(pendingRegistration?.name);
+        if (!usernameCheck.valid) {
+            showError('registration-error', usernameCheck.message);
+            return false;
+        }
         updateDataStatus('syncing');
         const studentData = {
             id: pendingRegistration.uuid,
@@ -697,7 +862,8 @@ async function registerStudent(formData) {
                     const record = withCollection(studentData, "students");
                     const result = await window.dataSdk.create(record);
             if (result.isOk) {
-                currentStudent = studentData;
+                const saved = result.record || studentData;
+                currentStudent = saved;
                 userType = 'student';
                 isLoggedIn = true;
                 showStudentView();
@@ -1652,11 +1818,9 @@ async function saveStudentEdit() {
         if (!firstName || !lastName || !username || !house || !role) {
             return;
         }
-        const existingStudent = students.find(s => 
-            s.minecraft_username.toLowerCase() === username.toLowerCase() && 
-            s.__backendId !== editingStudentData.__backendId
-        );
-        if (existingStudent) {
+        const usernameCheck = validateUsername(username, editingStudentData.__backendId);
+        if (!usernameCheck.valid) {
+            showError('edit-student-error', usernameCheck.message);
             return;
         }
         updateDataStatus('syncing');
@@ -1753,11 +1917,15 @@ async function confirmDeleteStudent(studentId) {
 }
 
 async function executeDeleteStudent(studentId) {
-    const success = await deleteStudent(studentId);
-    if (success) {
-        // Updated via data handler
-    } else {
-        updateStudentsList();
+    showPageLoader('กำลังลบข้อมูล...');
+    try {
+        const success = await deleteStudent(studentId);
+        if (success) {
+        } else {
+            updateStudentsList();
+        }
+    } finally {
+        hidePageLoader();
     }
 }
 
@@ -1770,11 +1938,9 @@ async function addStudentManually(formData) {
         if (allRecords.length >= 999) {
             return { success: false, message: 'ระบบเต็ม ไม่สามารถเพิ่มนักศึกษาได้' };
         }
-        const existingStudent = students.find(s => 
-            s.minecraft_username.toLowerCase() === formData.username.toLowerCase()
-        );
-        if (existingStudent) {
-            return { success: false, message: 'Username นี้มีอยู่ในระบบแล้ว' };
+        const usernameCheck = validateUsername(formData.username);
+        if (!usernameCheck.valid) {
+            return { success: false, message: usernameCheck.message };
         }
         updateDataStatus('syncing');
         const studentData = {
