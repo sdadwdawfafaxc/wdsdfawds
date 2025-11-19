@@ -261,7 +261,7 @@ const googleSheetDataSdk = (() => {
             const response = await fetch(googleSheetConfig.scriptUrl, {
                 method: "POST",
                 mode: "cors",
-                headers: { "Content-Type": "text/plain" }, // keep request "simple" to avoid CORS preflight
+                headers: { "Content-Type": "text/plain" },
                 body: JSON.stringify({ action, ...payload }),
                 signal: controller?.signal
             });
@@ -605,7 +605,9 @@ const minecraftPlayers = [
     { "uuid": "015793c0-33a2-4792-8e51-c9bcdb1a666e", "name": "jrjj112" },
     { "uuid": "6adfd028-d3fa-440e-88fd-de32c0ce3f44", "name": "Kjofex2" },
     { "uuid": "d8d51373-27cb-4aea-b488-c70790cd4787", "name": "LRS_Karma" },
-    { "uuid": "2b5c5927-70c4-49e6-9aff-06b11803373a", "name": "Asteria_x086" }
+    { "uuid": "2b5c5927-70c4-49e6-9aff-06b11803373a", "name": "Asteria_x086" },
+    { "uuid": "eb73d41d-b7d6-435c-bba1-25610612df68", "name": "_MAJ0R" }
+
 ];
 
 function showLoading(buttonId, loadingId) {

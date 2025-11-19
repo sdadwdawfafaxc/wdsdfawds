@@ -1,889 +1,2276 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
- <head>
-  <link rel="icon" type="image/png" href="image/ima1ge.png">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nexus group orion</title>
-  <link rel="stylesheet" href="assets/css/tailwind.min.css">
-  <link rel="stylesheet" href="assets/css/style.css">
- </head>
- <body class="min-h-full">
-  <div id="login-screen" class="min-h-full flex items-center justify-center safe-area-top safe-area-bottom responsive-padding">
-   <div class="dark-glass neon-glow rounded-2xl responsive-padding w-full modal-responsive card-hover">
-    <div class="text-center responsive-margin">
-     <div class="mx-auto w-40 h-40 logo-badge flex items-center justify-center mb-6">
-      <img src="image/image.png" alt="Orion logo" class="w-36 h-36 object-contain">
-     </div>
-     <h1 id="login-title" class="text-2xl font-bold text-white mb-3">ระบบจัดการนักศึกษา</h1>
-     <p class="text-slate-300">เลือกประเภทการเข้าสู่ระบบ</p>
-     <div class="mt-4 flex justify-center">
-      <div id="data-status" class="data-saved">
-       💾 ข้อมูลพร้อมใช้งาน
-      </div>
-     </div>
-    </div>
-    <div class="responsive-margin">
-     <div class="grid grid-cols-1 sm:grid-cols-2 rounded-xl glass-effect p-1 gap-1"><button type="button" id="student-tab" class="btn-responsive rounded-lg font-medium transition-all bg-blue-600 text-white shadow-sm font-semibold touch-friendly hover:bg-blue-700"> 🎮 Minecraft Username </button> <button type="button" id="admin-tab" class="btn-responsive rounded-lg font-medium transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-100 touch-friendly"> 🎓 อาจารย์ </button>
-     </div>
-    </div>
-    <form id="student-login-form" class="login-form form-mobile">
-     <div class="responsive-margin"><label for="student-login-name" class="block responsive-text font-semibold text-white mb-2 sm:mb-3">🎮 Username</label> <input type="text" id="student-login-name" required class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center responsive-text text-white placeholder-slate-400 border-0 touch-friendly font-medium" placeholder="กรอก Username ของคุณ">
-     </div><button type="submit" id="student-login-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center shadow-sm touch-friendly"> <span>🎮 เข้าสู่ระบบ</span>
-      <div id="student-login-loading" class="loading-spinner ml-2 hidden"></div></button>
-    </form>
-    <form id="admin-login-form" class="login-form form-mobile hidden">
-     <div class="responsive-margin"><label for="admin-password" class="block responsive-text font-semibold text-white mb-2 sm:mb-3">รหัสอาจารย์</label> <input type="password" id="admin-password" required class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center responsive-text text-white placeholder-slate-400 border-0 touch-friendly font-medium" placeholder="กรอกรหัสอาจารย์">
-     </div><button type="submit" id="admin-login-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center shadow-sm touch-friendly"> <span>🎓 เข้าสู่ระบบอาจารย์</span>
-      <div id="admin-login-loading" class="loading-spinner ml-2 hidden"></div></button>
-    </form>
-    <div id="login-error" class="mt-4 p-4 glass-effect border border-red-400 text-red-300 rounded-xl hidden">
-     <div class="flex items-center">
-      <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-      </svg><span id="error-message">ข้อมูลไม่ถูกต้อง</span>
-     </div>
-    </div>
-   </div>
-  </div>
-
-  <div id="registration-screen" class="hidden min-h-full flex items-center justify-center safe-area-top safe-area-bottom responsive-padding">
-   <div class="dark-glass neon-glow rounded-2xl responsive-padding w-full modal-responsive card-hover">
-    <div class="text-center responsive-margin">
-     <div class="mx-auto w-16 h-16 sm:w-20 sm:h-20 glass-effect rounded-full flex items-center justify-center mb-4 sm:mb-6 floating-animation"><span class="text-2xl sm:text-3xl">📝</span>
-     </div>
-     <h1 class="responsive-title font-bold text-white mb-2 sm:mb-3">ลงทะเบียนข้อมูลส่วนตัว</h1>
-     <p class="responsive-text text-slate-300 font-medium">กรอกข้อมูลเพิ่มเติมเพื่อเข้าสู่ระบบ</p>
-     <p id="minecraft-username-display" class="responsive-text text-blue-400 font-bold mt-2">🎮 Minecraft: -</p>
-    </div>
-    <form id="registration-form" class="form-mobile">
-     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 responsive-margin">
-      <div><label for="first-name" class="block responsive-text font-semibold text-white mb-2">ชื่อ</label> <input type="text" id="first-name" required class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 border-0 touch-friendly font-medium" placeholder="กรอกชื่อ">
-      </div>
-      <div><label for="last-name" class="block responsive-text font-semibold text-white mb-2">นามสกุล</label> <input type="text" id="last-name" required class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 border-0 touch-friendly font-medium" placeholder="กรอกนามสกุล">
-      </div>
-     </div>
-     <div class="responsive-margin"><label class="block responsive-text font-semibold text-white mb-3 sm:mb-4">🏠 เลือกบ้านของคุณ</label>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-       <div class="house-option" data-house="hades"><input type="radio" id="house-hades" name="house" value="hades" class="hidden" required> <label for="house-hades" class="block cursor-pointer touch-friendly">
-         <div class="glass-effect rounded-xl responsive-padding text-center transition-all duration-300 hover:bg-black/20 border-2 border-transparent hover:border-black">
-          <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">
-           ⚫
+  <head>
+    <link rel="icon" type="image/png" href="image/ima1ge.png" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nexus group orion</title>
+    <link rel="stylesheet" href="assets/css/tailwind.min.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body class="min-h-full">
+    <div
+      id="login-screen"
+      class="min-h-full flex items-center justify-center safe-area-top safe-area-bottom responsive-padding"
+    >
+      <div
+        class="dark-glass neon-glow rounded-2xl responsive-padding w-full modal-responsive card-hover"
+      >
+        <div class="text-center responsive-margin">
+          <div
+            class="mx-auto w-40 h-40 logo-badge flex items-center justify-center mb-6"
+          >
+            <img
+              src="image/image.png"
+              alt="Orion logo"
+              class="w-36 h-36 object-contain"
+            />
           </div>
-          <h3 class="responsive-subtitle font-bold text-white">เฮเดส</h3>
-         </div></label>
-       </div>
-       <div class="house-option" data-house="ceres"><input type="radio" id="house-ceres" name="house" value="ceres" class="hidden" required> <label for="house-ceres" class="block cursor-pointer touch-friendly">
-         <div class="glass-effect rounded-xl responsive-padding text-center transition-all duration-300 hover:bg-white/20 border-2 border-transparent hover:border-white">
-          <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">
-           ⚪
+          <h1 id="login-title" class="text-2xl font-bold text-white mb-3">
+            ระบบจัดการนักศึกษา
+          </h1>
+          <p class="text-slate-300">เลือกประเภทการเข้าสู่ระบบ</p>
+          <div class="mt-4 flex justify-center">
+            <div id="data-status" class="data-saved">💾 ข้อมูลพร้อมใช้งาน</div>
           </div>
-          <h3 class="responsive-subtitle font-bold text-white">เซเรส</h3>
-         </div></label>
-       </div>
+        </div>
+        <div class="responsive-margin">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 rounded-xl glass-effect p-1 gap-1"
+          >
+            <button
+              type="button"
+              id="student-tab"
+              class="btn-responsive rounded-lg font-medium transition-all bg-blue-600 text-white shadow-sm font-semibold touch-friendly hover:bg-blue-700"
+            >
+              🎮 Minecraft Username
+            </button>
+            <button
+              type="button"
+              id="admin-tab"
+              class="btn-responsive rounded-lg font-medium transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-100 touch-friendly"
+            >
+              🎓 อาจารย์
+            </button>
+          </div>
+        </div>
+        <form id="student-login-form" class="login-form form-mobile">
+          <div class="responsive-margin">
+            <label
+              for="student-login-name"
+              class="block responsive-text font-semibold text-white mb-2 sm:mb-3"
+              >🎮 Username</label
+            >
+            <input
+              type="text"
+              id="student-login-name"
+              required
+              class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center responsive-text text-white placeholder-slate-400 border-0 touch-friendly font-medium"
+              placeholder="กรอก Username ของคุณ"
+            />
+          </div>
+          <button
+            type="submit"
+            id="student-login-button"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center shadow-sm touch-friendly"
+          >
+            <span>🎮 เข้าสู่ระบบ</span>
+            <div
+              id="student-login-loading"
+              class="loading-spinner ml-2 hidden"
+            ></div>
+          </button>
+        </form>
+        <form id="admin-login-form" class="login-form form-mobile hidden">
+          <div class="responsive-margin">
+            <label
+              for="admin-password"
+              class="block responsive-text font-semibold text-white mb-2 sm:mb-3"
+              >รหัสอาจารย์</label
+            >
+            <input
+              type="password"
+              id="admin-password"
+              required
+              class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center responsive-text text-white placeholder-slate-400 border-0 touch-friendly font-medium"
+              placeholder="กรอกรหัสอาจารย์"
+            />
+          </div>
+          <button
+            type="submit"
+            id="admin-login-button"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center shadow-sm touch-friendly"
+          >
+            <span>🎓 เข้าสู่ระบบอาจารย์</span>
+            <div
+              id="admin-login-loading"
+              class="loading-spinner ml-2 hidden"
+            ></div>
+          </button>
+        </form>
+        <div
+          id="login-error"
+          class="mt-4 p-4 glass-effect border border-red-400 text-red-300 rounded-xl hidden"
+        >
+          <div class="flex items-center">
+            <svg
+              class="w-5 h-5 text-red-400 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewbox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path></svg
+            ><span id="error-message">ข้อมูลไม่ถูกต้อง</span>
+          </div>
+        </div>
       </div>
-     </div>
-     <div class="responsive-margin"><label class="block responsive-text font-semibold text-white mb-3 sm:mb-4">🎭 บทบาทของคุณ</label>
-      <div class="glass-effect rounded-xl responsive-padding text-center border-2 border-blue-500 bg-blue-50">
-       <div class="text-2xl sm:text-3xl mb-2">
-        👨‍🎓
-       </div>
-       <h4 class="responsive-text font-bold text-white">นักเรียนทั่วไป</h4>
-       <p class="text-xs text-slate-300 mt-1">บทบาทเริ่มต้น - อาจารย์สามารถมอบบทบาทพิเศษให้ภายหลัง</p>
-      </div> <input type="hidden" name="role" value="normal" required>
-     </div>
-     <div class="flex flex-col sm:flex-row gap-3 sm:gap-4"><button type="button" id="back-to-login" class="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 touch-friendly"> ← กลับ </button> <button type="submit" id="register-button" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center touch-friendly"> <span>✅ ลงทะเบียน</span>
-       <div id="register-loading" class="loading-spinner ml-2 hidden"></div></button>
-     </div>
-    </form>
-    <div id="registration-error" class="mt-4 p-4 glass-effect border border-red-400 text-red-300 rounded-xl hidden">
-     <div class="flex items-center">
-      <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-      </svg><span id="registration-error-message">เกิดข้อผิดพลาด</span>
-     </div>
     </div>
-   </div>
-  </div>
 
-  <div id="student-view" class="hidden safe-area-top safe-area-bottom">
-   <div class="responsive-container responsive-padding landscape-compact">
-    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center responsive-margin">
-     <div class="mb-4 sm:mb-0">
-      <h1 class="responsive-title font-bold text-white mb-2">👨‍🎓 ข้อมูลนักศึกษา</h1>
-      <p class="responsive-text text-slate-300 font-medium">ดูข้อมูลและคะแนนของคุณ (เฉพาะดูเท่านั้น)</p>
-      <div class="mt-2 flex items-center gap-2">
-       <div id="student-data-status" class="data-saved">
-        💾 ข้อมูลซิงค์แล้ว
-       </div><span id="student-last-update" class="text-xs text-slate-400"> อัปเดต: กำลังโหลด... </span>
-      </div>
-     </div><button id="student-logout-button" class="bg-red-500 hover:bg-red-600 text-white font-semibold btn-responsive rounded-lg transition duration-200 touch-friendly w-full sm:w-auto"> ออกจากระบบ </button>
-    </header>
-    <div class="bg-gray-800 rounded-xl shadow-lg responsive-padding responsive-margin border border-gray-600">
-     <div class="text-center">
-      <div id="student-house-icon" class="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mb-3 sm:mb-4"><span class="text-2xl sm:text-3xl">🎮</span>
-      </div>
-      <h2 id="student-real-name" class="responsive-title font-bold text-white mb-2">-</h2>
-      <p id="student-minecraft-name" class="responsive-subtitle text-blue-400 mb-2 font-bold">🎮 Minecraft: -</p>
-      <p id="student-house-display" class="responsive-text text-gray-300 mb-2 sm:mb-3 font-semibold">🏠 บ้าน: -</p>
-      <p id="student-role-display" class="responsive-text text-gray-300 mb-3 sm:mb-4 font-semibold">🎭 บทบาท: -</p>
-      <p id="student-id-display" class="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-6 font-mono break-all">UUID: -</p>
-      <div class="bg-gray-700 rounded-xl responsive-padding border border-gray-600">
-       <h3 class="responsive-subtitle font-bold text-white mb-3 sm:mb-4">คะแนนของคุณ</h3>
-       <div class="flex items-center justify-center"><span id="student-score" class="text-4xl sm:text-6xl font-bold text-blue-400">0</span> <span class="responsive-subtitle text-gray-300 ml-2 font-semibold">คะแนน</span>
-       </div>
-      <div id="student-rank" class="mt-3 sm:mt-4">
-       </div>
-      </div>
-     </div>
-    </div>
-    <div class="bg-gray-800 rounded-xl shadow-lg responsive-padding border border-gray-600">
-     <h3 class="responsive-subtitle font-bold text-white mb-3 sm:mb-4">สถิติของชั้น</h3>
-     <div class="auto-grid-sm">
-      <div class="text-center responsive-padding bg-gray-700 rounded-lg border border-gray-600">
-       <p class="responsive-text text-gray-300 font-semibold">คะแนนเฉลี่ย</p>
-       <p id="class-average" class="text-xl sm:text-2xl font-bold text-blue-400">0</p>
-      </div>
-      <div class="text-center responsive-padding bg-gray-700 rounded-lg border border-gray-600">
-       <p class="responsive-text text-gray-300 font-semibold">คะแนนสูงสุด</p>
-       <p id="class-highest" class="text-xl sm:text-2xl font-bold text-green-400">0</p>
-      </div>
-      <div class="text-center responsive-padding bg-gray-700 rounded-lg border border-gray-600">
-       <p class="responsive-text text-gray-300 font-semibold">จำนวนนักศึกษา</p>
-       <p id="class-total" class="text-xl sm:text-2xl font-bold text-purple-400">0</p>
-      </div>
-     </div>
-    </div>
-   </div>
-  </div>
-  
-  <div id="teacher-view" class="hidden min-h-full p-6">
-   <div class="max-w-7xl mx-auto">
-    <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
-     <div class="mb-4 lg:mb-0">
-      <h1 class="text-3xl font-bold text-white mb-2">🎓 ระบบจัดการนักศึกษา (อาจารย์)</h1>
-      <p class="text-slate-300">จัดการคะแนนและเงิน พร้อมระบบบันทึกถาวร</p>
-      <div class="flex items-center mt-2 gap-4">
-       <div class="flex items-center text-sm text-green-400">
-        <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div><span>ระบบพร้อมใช้งาน</span>
-       </div>
-       <div id="teacher-data-status" class="data-saved">
-        💾 ข้อมูลซิงค์แล้ว
-       </div>
-       <div class="text-sm text-slate-400"><span id="teacher-last-sync">อัปเดตล่าสุด: กำลังโหลด...</span>
-       </div><button id="teacher-refresh-data-button" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded-lg transition-colors"> 🔄 รีเฟรช </button>
-      </div>
-     </div>
-     <div class="flex gap-3"><button id="teacher-backup-button" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 💾 สำรองข้อมูล </button> <button id="super-admin-login-button" class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 👑 Admin </button> <button id="teacher-logout-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> ออกจากระบบ </button>
-     </div>
-    </header>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-     <div class="dark-glass p-6">
-      <div class="flex items-center">
-       <div class="p-3 glass-effect rounded-full"><span class="text-2xl">👥</span>
-       </div>
-       <div class="ml-4">
-        <p class="text-sm font-medium text-slate-300">จำนวนนักศึกษา</p>
-        <p id="teacher-total-students" class="text-3xl font-bold text-white">0</p>
-       </div>
-      </div>
-     </div>
-     <div class="dark-glass p-6">
-      <div class="flex items-center">
-       <div class="p-3 glass-effect rounded-full"><span class="text-2xl">📊</span>
-       </div>
-       <div class="ml-4">
-        <p class="text-sm font-medium text-slate-300">คะแนนเฉลี่ย</p>
-        <p id="teacher-average-score" class="text-3xl font-bold text-white">0</p>
-       </div>
-      </div>
-     </div>
-     <div class="dark-glass p-6">
-      <div class="flex items-center">
-       <div class="p-3 glass-effect rounded-full"><span class="text-2xl">⭐</span>
-       </div>
-       <div class="ml-4">
-        <p class="text-sm font-medium text-slate-300">คะแนนสูงสุด</p>
-        <p id="teacher-highest-score" class="text-3xl font-bold text-white">0</p>
-       </div>
-      </div>
-     </div>
-     <div class="dark-glass p-6">
-      <div class="flex items-center">
-       <div class="p-3 glass-effect rounded-full"><span class="text-2xl">📋</span>
-       </div>
-       <div class="ml-4">
-        <p class="text-sm font-medium text-slate-300">รายการทำงาน</p>
-        <p id="teacher-total-transactions" class="text-3xl font-bold text-white">0</p>
-       </div>
-      </div>
-     </div>
-    </div>
-    <div class="dark-glass p-6 mb-8">
-     <h2 class="text-2xl font-semibold text-white mb-4">💾 จัดการข้อมูลถาวร</h2>
-     <p class="text-slate-300 mb-6">ระบบบันทึกข้อมูลทุกการเปลี่ยนแปลงแบบถาวร สามารถสำรอง กู้คืน และจัดการได้</p>
-     <div class="grid grid-cols-1 md:grid-cols-3 gap-4"><button id="view-all-transactions-button" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📋 ดูประวัติทั้งหมด <span id="all-transactions-count" class="bg-white/20 px-2 py-1 rounded-full text-sm">0</span> </button> <button id="export-data-button" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📤 ส่งออกข้อมูล </button> <button id="import-data-button" class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📥 นำเข้าข้อมูล </button>
-     </div>
-    </div>
-    <div class="dark-glass p-6 mb-8">
-     <h2 class="text-2xl font-semibold text-white mb-4">📊 จัดการคะแนนรายบุคคล</h2>
-     <p class="text-slate-300 mb-6">คลิกที่ชื่อนักศึกษาเพื่อจัดการคะแนนและเงิน (บันทึกถาวรทุกการเปลี่ยนแปลง)</p>
-     <div id="teacher-score-cards-container" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-     </div>
-     <div id="teacher-score-cards-empty" class="text-center py-12">
-      <div class="flex flex-col items-center"><span class="text-6xl mb-4">👥</span>
-       <p class="text-xl text-white mb-2">ยังไม่มีข้อมูลนักศึกษา</p>
-       <p class="text-slate-400">รอให้นักศึกษาลงทะเบียนเข้าสู่ระบบ</p>
-      </div>
-     </div>
-    </div>
-    <div class="dark-glass overflow-hidden">
-     <div class="p-6 border-b border-slate-600">
-      <div class="flex justify-between items-center">
-       <h2 class="text-2xl font-semibold text-white">📋 รายชื่อนักศึกษาและคะแนน</h2>
-       <div class="text-sm text-slate-400"><span class="inline-flex items-center"> 📊 ข้อมูลจาก Canva Sheet (อัปเดตแบบเรียลไทม์) </span>
-       </div>
-      </div>
-     </div>
-     <div class="table-scroll">
-      <table class="w-full table-responsive">
-       <thead class="glass-effect">
-        <tr>
-         <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider">👤 ชื่อ-นามสกุล</th>
-         <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider">🎮 Username</th>
-         <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider">🏠 บ้าน</th>
-         <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider">🎭 บทบาท</th>
-         <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider">คะแนน</th>
-         <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider">💰 เงิน</th>
-         <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider">จัดการ</th>
-        </tr>
-       </thead>
-       <tbody id="teacher-students-list" class="divide-y divide-slate-600">
-        <tr id="teacher-empty-state">
-         <td colspan="7" class="px-6 py-12 text-center text-slate-400">
-          <div class="flex flex-col items-center"><span class="text-6xl mb-6">👥</span>
-           <p class="text-xl text-white mb-2">ยังไม่มีข้อมูลผู้เล่น</p>
-           <p class="text-slate-400">รอให้ผู้เล่น Minecraft เข้าสู่ระบบ</p>
-          </div></td>
-        </tr>
-       </tbody>
-      </table>
-     </div>
-    </div>
-   </div>
-  </div>
-  
-  <div id="admin-view" class="hidden min-h-full p-6">
-   <div class="max-w-7xl mx-auto">
-    <header class="flex justify-between items-center mb-8">
-     <div>
-      <h1 class="text-4xl font-bold text-white mb-3">👑 ระบบจัดการนักศึกษา - Super Admin</h1>
-      <p class="text-slate-300 text-lg">จัดการข้อมูลนักศึกษาและระบบทั้งหมด พร้อมระบบบันทึกถาวร</p>
-      <div class="flex items-center mt-2 gap-4">
-       <div class="flex items-center text-sm text-yellow-400">
-        <div class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div><span>👑 Super Admin Mode</span>
-       </div>
-       <div id="admin-data-status" class="data-saved">
-        💾 ข้อมูลซิงค์แล้ว
-       </div>
-       <div class="text-sm text-slate-400"><span id="admin-last-sync">อัปเดตล่าสุด: กำลังโหลด...</span>
-       </div><button id="admin-refresh-data-button" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded-lg transition-colors"> 🔄 รีเฟรช </button>
-      </div>
-     </div>
-     <div class="flex gap-3"><button id="admin-backup-button" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"> 💾 สำรองข้อมูล </button> <button id="admin-logout-button" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"> ออกจากระบบ </button>
-     </div>
-    </header>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-     <div class="dark-glass p-6">
-      <div class="flex items-center">
-       <div class="p-3 glass-effect rounded-full"><span class="text-2xl">👥</span>
-       </div>
-       <div class="ml-4">
-        <p class="text-sm font-medium text-slate-300">จำนวนนักศึกษา</p>
-        <p id="admin-total-students" class="text-3xl font-bold text-white">0</p>
-       </div>
-      </div>
-     </div>
-     <div class="dark-glass p-6">
-      <div class="flex items-center">
-       <div class="p-3 glass-effect rounded-full"><span class="text-2xl">📊</span>
-       </div>
-       <div class="ml-4">
-        <p class="text-sm font-medium text-slate-300">คะแนนเฉลี่ย</p>
-        <p id="admin-average-score" class="text-3xl font-bold text-white">0</p>
-       </div>
-      </div>
-     </div>
-     <div class="dark-glass p-6">
-      <div class="flex items-center">
-       <div class="p-3 glass-effect rounded-full"><span class="text-2xl">⭐</span>
-       </div>
-       <div class="ml-4">
-        <p class="text-sm font-medium text-slate-300">คะแนนสูงสุด</p>
-        <p id="admin-highest-score" class="text-3xl font-bold text-white">0</p>
-       </div>
-      </div>
-     </div>
-     <div class="dark-glass p-6">
-      <div class="flex items-center">
-       <div class="p-3 glass-effect rounded-full"><span class="text-2xl">💾</span>
-       </div>
-       <div class="ml-4">
-        <p class="text-sm font-medium text-slate-300">ข้อมูลทั้งหมด</p>
-        <p id="admin-total-records" class="text-3xl font-bold text-white">0</p>
-       </div>
-      </div>
-     </div>
-    </div>
-    <div class="dark-glass rounded-2xl p-8 mb-8 super-admin-glow">
-     <h2 class="text-3xl font-semibold gradient-text mb-6">💾 จัดการข้อมูลถาวรขั้นสูง</h2>
-     <p class="text-slate-300 mb-6">ระบบบันทึกข้อมูลทุกการเปลี่ยนแปลงแบบถาวร สามารถสำรอง กู้คืน แก้ไข และลบได้</p>
-     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"><button id="admin-view-all-data-button" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📋 ดูข้อมูลทั้งหมด <span id="admin-all-records-count" class="bg-white/20 px-2 py-1 rounded-full text-sm">0</span> </button> <button id="admin-export-data-button" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📤 ส่งออกข้อมูล </button> <button id="admin-import-data-button" class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📥 นำเข้าข้อมูล </button> <button id="admin-clear-data-button" class="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 🗑️ ล้างข้อมูล </button>
-     </div>
-    </div>
-    <div class="dark-glass p-6 mb-8">
-     <h2 class="text-2xl font-semibold text-white mb-6">➕ เพิ่มนักศึกษาใหม่</h2>
-     <p class="text-slate-300 mb-6">Super Admin สามารถเพิ่มนักศึกษาใหม่เข้าสู่ระบบได้ (ทั้ง Minecraft Player และ Custom Username) โดยไม่ต้องรอให้นักศึกษาลงทะเบียนเอง</p>
-     <form id="admin-manual-add-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-      <div><label for="admin-manual-first-name" class="block text-sm font-medium text-slate-300 mb-2">ชื่อ</label> <input type="text" id="admin-manual-first-name" required class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0" placeholder="กรอกชื่อ">
-      </div>
-      <div><label for="admin-manual-last-name" class="block text-sm font-medium text-slate-300 mb-2">นามสกุล</label> <input type="text" id="admin-manual-last-name" required class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0" placeholder="กรอกนามสกุล">
-      </div>
-      <div><label for="admin-manual-minecraft" class="block text-sm font-medium text-slate-300 mb-2">🎮 Username (Minecraft หรือกำหนดเอง)</label> <input type="text" id="admin-manual-minecraft" required class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0" placeholder="กรอก Username สำหรับเข้าสู่ระบบ">
-      </div>
-      <div><label for="admin-manual-house" class="block text-sm font-medium text-slate-300 mb-2">บ้าน</label> <select id="admin-manual-house" required class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white border-0 bg-slate-700"> <option value="">เลือกบ้าน</option> <option value="hades">⚫ เฮเดส</option> <option value="ceres">⚪ เซเรส</option> <option value="other">🏠 อื่นๆ</option> </select>
-      </div>
-      <div><label for="admin-manual-role" class="block text-sm font-medium text-slate-300 mb-2">บทบาท</label> <select id="admin-manual-role" required class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white border-0 bg-slate-700"> <option value="">เลือกบทบาท</option> <option value="normal">👨‍🎓 นักเรียนทั่วไป</option> <option value="medical">⚕️ นักเรียนแพทย์</option> <option value="council">🏛️ สภานักเรียน</option> <option value="senior">🎖️ รุ่นพี่</option> </select>
-      </div>
-      <div class="flex items-end"><button type="submit" id="admin-manual-add-button" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center"> <span>➕ เพิ่มนักศึกษา</span>
-        <div id="admin-manual-add-loading" class="loading-spinner ml-2 hidden"></div></button>
-      </div>
-     </form>
-     <div class="text-sm text-slate-400 bg-slate-800/50 rounded-lg p-4">
-      <div class="flex items-start">
-       <svg class="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-       </svg>
-       <div>
-        <p class="font-medium text-slate-300 mb-1">💡 คำแนะนำ:</p>
-        <ul class="space-y-1 text-xs">
-         <li>• <strong>ชื่อ นามสกุล Username และบ้าน</strong> จำเป็นต้องกรอกทั้งหมด</li>
-         <li>• <strong>Username</strong> สามารถเป็น Minecraft Username หรือ Username ที่กำหนดเองก็ได้</li>
-         <li>• ระบบจะตรวจสอบว่า Username ซ้ำหรือไม่</li>
-         <li>• นักศึกษาสามารถใช้ <strong>Username นี้</strong> เข้าสู่ระบบได้ทันที</li>
-         <li>• สามารถจัดการคะแนนได้เหมือนนักศึกษาปกติ</li>
-         <li>• ข้อมูลจะถูกบันทึกใน Canva Sheet แบบเรียลไทม์และถาวร</li>
-         <li>• <span class="text-green-400">🎮 Minecraft Player</span> = ผู้เล่น Minecraft จริง | <span class="text-blue-400">👤 Custom Player</span> = Username ที่กำหนดเอง</li>
-        </ul>
-       </div>
-      </div>
-     </div>
-    </div>
-    <div class="dark-glass rounded-2xl p-8 mb-8 super-admin-glow">
-     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-      <div>
-       <h2 class="text-3xl font-semibold gradient-text mb-3">👑 จัดการประวัติการทำรายการ (Admin)</h2>
-       <p class="text-slate-300">Admin สามารถดู แก้ไข ลบ และจัดการประวัติการทำรายการทั้งหมด</p>
-       <p class="text-slate-400 text-sm mt-1">🔧 สิทธิ์เต็ม: แก้ไขข้อมูล ลบรายการ และจัดการประวัติทั้งหมด</p>
-      </div>
-      <div class="flex flex-col sm:flex-row gap-3"><button id="show-all-transactions-admin-button" class="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center gap-2"> 📋 จัดการประวัติทั้งหมด <span id="admin-transactions-count" class="bg-white/20 px-2 py-1 rounded-full text-sm">0</span> </button> <button id="show-teacher-transactions-button" class="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center gap-2"> 👨‍🏫 ประวัติอาจารย์ <span id="teacher-transactions-count" class="bg-white/20 px-2 py-1 rounded-full text-sm">0</span> </button> <button id="show-refund-history-button" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center gap-2"> 💚 ประวัติการคืนเงิน <span id="refund-history-count" class="bg-white/20 px-2 py-1 rounded-full text-sm">0</span> </button>
-      </div>
-     </div>
-    </div>
-    <div class="dark-glass rounded-2xl p-8 mb-8 super-admin-glow">
-     <h2 class="text-3xl font-semibold gradient-text mb-6">📊 จัดการคะแนนรายบุคคล</h2>
-     <p class="text-slate-300 mb-6">คลิกที่ชื่อนักศึกษาเพื่อจัดการคะแนนและเงิน (บันทึกถาวรทุกการเปลี่ยนแปลง)</p>
-     <div id="admin-score-cards-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-     </div>
-     <div id="admin-score-cards-empty" class="text-center py-12">
-      <div class="flex flex-col items-center">
-       <svg class="w-16 h-16 text-slate-500 mb-6 floating-animation" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-       </svg>
-       <p class="text-xl text-white mb-2">ยังไม่มีข้อมูลนักศึกษา</p>
-       <p class="text-slate-400">รอให้นักศึกษาลงทะเบียนเข้าสู่ระบบ</p>
-      </div>
-     </div>
-    </div>
-    <div class="dark-glass rounded-2xl overflow-hidden super-admin-glow">
-     <div class="px-8 py-6 glass-effect border-b border-slate-600">
-      <div class="flex justify-between items-center">
-       <h2 class="text-3xl font-semibold gradient-text">📋 รายชื่อนักศึกษาและคะแนน</h2>
-       <div class="text-sm text-slate-400"><span class="inline-flex items-center">
-         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-         </svg> 📊 ข้อมูลจาก Canva Sheet (อัปเดตแบบเรียลไทม์และถาวร) </span>
-       </div>
-      </div>
-     </div>
-     <div class="overflow-x-auto">
-      <table class="w-full">
-       <thead class="glass-effect">
-        <tr>
-         <th class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider">👤 ชื่อ-นามสกุล</th>
-         <th class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider">🎮 Username</th>
-         <th class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider">🏠 บ้าน</th>
-         <th class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider">🎭 บทบาท</th>
-         <th class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider">คะแนน</th>
-         <th class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider">💰 เงิน</th>
-         <th class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider">จัดการ</th>
-        </tr>
-       </thead>
-       <tbody id="admin-students-list" class="divide-y divide-slate-600">
-        <tr id="admin-empty-state">
-         <td colspan="7" class="px-6 py-12 text-center text-slate-400">
-          <div class="flex flex-col items-center">
-           <svg class="w-16 h-16 text-slate-500 mb-6 floating-animation" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-           </svg>
-           <p class="text-xl text-white mb-2">ยังไม่มีข้อมูลผู้เล่น</p>
-           <p class="text-slate-400">รอให้ผู้เล่น Minecraft เข้าสู่ระบบ</p>
-          </div></td>
-        </tr>
-       </tbody>
-      </table>
-     </div>
-    </div>
-   </div>
-  </div>
-  
-  <div id="super-admin-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-   <div class="dark-glass super-admin-glow rounded-2xl shadow-2xl responsive-padding modal-responsive">
-    <div class="text-center responsive-margin">
-     <div class="mx-auto w-12 h-12 sm:w-16 sm:h-16 glass-effect rounded-full flex items-center justify-center mb-3 sm:mb-4 floating-animation"><span class="text-xl sm:text-2xl">👑</span>
-     </div>
-     <h3 class="responsive-subtitle font-bold text-white mb-2">Super Admin Login</h3>
-     <p class="responsive-text text-slate-300">กรอกรหัส Super Admin เพื่อเข้าสู่ระบบจัดการขั้นสูง</p>
-    </div>
-    <form id="super-admin-form" class="form-mobile">
-     <div class="responsive-margin"><label for="super-admin-password" class="block responsive-text font-medium text-slate-300 mb-2 sm:mb-3">รหัส Super Admin</label> <input type="password" id="super-admin-password" required class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-center responsive-text text-white placeholder-slate-400 border-0 touch-friendly" placeholder="กรอกรหัส Super Admin">
-     </div>
-     <div class="flex flex-col sm:flex-row gap-3 sm:gap-4"><button type="submit" id="super-admin-login-submit" class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center touch-friendly"> <span>👑 เข้าสู่ระบบ</span>
-       <div id="super-admin-loading" class="loading-spinner ml-2 hidden"></div></button> <button type="button" id="cancel-super-admin" class="flex-1 bg-gray-600/80 hover:bg-gray-600 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 touch-friendly"> ยกเลิก </button>
-     </div>
-    </form>
-    <div id="super-admin-error" class="mt-4 p-4 glass-effect border border-red-400 text-red-300 rounded-xl hidden">
-     <div class="flex items-center">
-      <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-      </svg><span id="super-admin-error-message">รหัส Super Admin ไม่ถูกต้อง</span>
-     </div>
-    </div>
-   </div>
-  </div>
-  <div id="data-management-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-  <div class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-5xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
-    <div class="flex items-center justify-between p-6 border-b border-slate-600">
-     <div>
-      <h3 class="text-2xl font-bold gradient-text">💾 จัดการข้อมูลถาวร</h3>
-      <p class="text-slate-300 mt-1">ดู แก้ไข ลบ และจัดการข้อมูลทั้งหมดในระบบ</p>
-     </div><button onclick="closeDataManagementModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"> ✕ ปิด </button>
-    </div>
-    <div class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]">
-     <div class="mb-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div><label for="data-type-filter" class="block text-sm font-medium text-slate-300 mb-2">📊 ประเภทข้อมูล</label> <select id="data-type-filter" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white"> <option value="">ทั้งหมด</option> <option value="student">👥 ข้อมูลนักศึกษา</option> <option value="transaction">💸 ประวัติการทำรายการ</option> <option value="backup">💾 ข้อมูลสำรอง</option> </select>
-      </div>
-      <div><label for="data-search" class="block text-sm font-medium text-slate-300 mb-2">🔍 ค้นหา</label> <input type="text" id="data-search" placeholder="ค้นหาข้อมูล..." class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white">
-      </div>
-      <div class="flex items-end"><button id="refresh-data-list" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 🔄 รีเฟรชข้อมูล </button>
-      </div>
-     </div>
-     <div id="data-management-list" class="space-y-4">
-     </div>
-     <div id="data-management-empty" class="text-center py-12 text-slate-400 hidden">
-      <div class="text-6xl mb-4">
-       💾
-      </div>
-      <p class="text-xl">ไม่พบข้อมูล</p>
-      <p class="text-slate-500 mt-2">ลองเปลี่ยนตัวกรองหรือค้นหาใหม่</p>
-     </div>
-    </div>
-   </div>
-  </div>
-  
-  <div id="edit-data-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="bg-gray-800 rounded-xl shadow-2xl p-6 w-[92vw] sm:w-[86vw] md:w-[78vw] max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
-    <h3 class="text-xl font-semibold text-white mb-4">✏️ แก้ไขข้อมูล</h3>
-    <div id="edit-data-form">
-    </div>
-    <div class="flex gap-4 mt-6"><button id="save-data-button" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"> <span>💾 บันทึก</span>
-      <div id="save-data-loading" class="loading-spinner ml-2 hidden"></div></button> <button id="cancel-edit-data" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"> ยกเลิก </button>
-    </div>
-   </div>
-  </div>
-  <div id="backup-restore-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-4xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
-    <div class="flex items-center justify-between p-6 border-b border-slate-600">
-     <div>
-      <h3 class="text-2xl font-bold gradient-text">💾 สำรองและกู้คืนข้อมูล</h3>
-      <p class="text-slate-300 mt-1">จัดการการสำรองข้อมูลและกู้คืนระบบ</p>
-     </div><button onclick="closeBackupRestoreModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"> ✕ ปิด </button>
-    </div>
-    <div class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]">
-     <div class="backup-section mb-6">
-      <h4 class="text-xl font-semibold text-white mb-4">📤 สำรองข้อมูล</h4>
-      <p class="text-slate-300 mb-4">สร้างไฟล์สำรองข้อมูลทั้งหมดในระบบ</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><button id="create-full-backup" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 💾 สำรองข้อมูลทั้งหมด </button> <button id="create-students-backup" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 👥 สำรองข้อมูลนักศึกษา </button>
-      </div>
-     </div>
-     <div class="backup-section backup-warning mb-6">
-      <h4 class="text-xl font-semibold text-white mb-4">📥 กู้คืนข้อมูล</h4>
-      <p class="text-slate-300 mb-4">นำเข้าข้อมูลจากไฟล์สำรอง (จะเขียนทับข้อมูลเดิม)</p>
-      <div class="mb-4"><input type="file" id="restore-file-input" accept=".json" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent text-white">
-      </div><button id="restore-data-button" class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📥 กู้คืนข้อมูล 
-       <div id="restore-loading" class="loading-spinner ml-2 hidden"></div></button>
-     </div>
-     <div class="backup-section">
-      <h4 class="text-xl font-semibold text-white mb-4">📋 ประวัติการสำรอง</h4>
-      <div id="backup-history-list" class="space-y-3">
-      </div>
-      <div id="backup-history-empty" class="text-center py-8 text-slate-400">
-       <div class="text-4xl mb-2">
-        📋
-       </div>
-       <p>ยังไม่มีประวัติการสำรอง</p>
-      </div>
-     </div>
-    </div>
-   </div>
-  </div>
-  
-  <div id="quick-score-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-   <div class="dark-glass rounded-2xl shadow-2xl responsive-padding modal-responsive neon-glow">
-    <div class="text-center responsive-margin">
-     <h3 id="quick-modal-title" class="responsive-subtitle font-bold text-white mb-2">จัดการคะแนนและเงิน</h3>
-     <p id="quick-modal-subtitle" class="responsive-text text-slate-300 break-words">-</p>
-     <div class="mt-2 flex justify-center">
-      <div id="quick-data-status" class="data-saved">
-       💾 บันทึกถาวร
-      </div>
-     </div>
-    </div>
-    <div class="grid grid-cols-2 gap-3 sm:gap-4 responsive-margin">
-     <div class="glass-effect rounded-xl responsive-padding text-center">
-      <div id="quick-current-score" class="text-2xl sm:text-3xl font-bold text-blue-400 mb-1">
-       0
-      </div>
-      <p class="text-slate-400 text-xs sm:text-sm">คะแนนปัจจุบัน</p>
-     </div>
-     <div class="glass-effect rounded-xl responsive-padding text-center">
-      <div id="quick-current-money" class="text-2xl sm:text-3xl font-bold text-red-400 mb-1">
-       0
-      </div>
-      <p class="text-slate-400 text-xs sm:text-sm">เงินที่ถูกหัก</p>
-     </div>
-    </div>
-    <div class="responsive-margin">
-     <h4 class="responsive-subtitle font-semibold text-white mb-3">👨‍🏫 ข้อมูลอาจารย์ (จำเป็น)</h4>
-     <div class="mb-4"><input type="text" id="teacher-name-input" class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm" placeholder="กรอกชื่ออาจารย์ผู้ทำรายการ (จำเป็น)" required>
-      <div class="text-xs text-slate-400 mt-1 bg-slate-800/50 rounded p-2">
-       ⚠️ ต้องกรอกชื่ออาจารย์ก่อนทำการให้คะแนนหรือหักเงิน
-      </div>
-     </div>
-    </div>
-    <div class="responsive-margin">
-     <h4 class="responsive-subtitle font-semibold text-white mb-3">📊 จัดการคะแนน</h4>
-     <div class="grid grid-cols-4 gap-2 mb-3"><button onclick="quickAdjustScore(1)" class="bg-green-600/80 hover:bg-green-600 text-white font-semibold btn-responsive rounded-lg transition-all touch-friendly"> +1 </button> <button onclick="quickAdjustScore(5)" class="bg-green-600/80 hover:bg-green-600 text-white font-semibold btn-responsive rounded-lg transition-all touch-friendly"> +5 </button> <button onclick="quickAdjustScore(-1)" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold btn-responsive rounded-lg transition-all touch-friendly"> -1 </button> <button onclick="quickAdjustScore(-5)" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold btn-responsive rounded-lg transition-all touch-friendly"> -5 </button>
-     </div>
-     <div class="flex gap-2 mb-3"><input type="number" id="quick-custom-score" class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm" placeholder="จำนวนคะแนน"> <button onclick="quickAdjustScoreCustom()" class="bg-blue-600/80 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"> เพิ่ม </button>
-     </div>
-     <div class="flex gap-2"><input type="number" id="quick-exact-score" class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm" placeholder="ตั้งคะแนนเป็น"> <button onclick="quickSetExactScore()" class="bg-purple-600/80 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"> ตั้ง </button>
-     </div>
-    </div>
-    <div class="mb-6">
-     <h4 class="text-lg font-semibold text-white mb-3">💸 จัดการเงินที่ถูกหัก</h4>
-     <div class="mb-4"><label for="money-reason-input" class="block text-sm font-medium text-slate-300 mb-2">📝 เหตุผลการหักเงิน (จำเป็น)</label> <input type="text" id="money-reason-input" class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm" placeholder="กรอกเหตุผลการหักเงิน เช่น มาสาย, ไม่ส่งงาน, ทำผิดกฎ" required>
-      <div class="text-xs text-slate-400 mt-1 bg-slate-800/50 rounded p-2">
-       ⚠️ ต้องกรอกเหตุผลก่อนทำการหักเงินหรือลดเงิน (จะถูกบันทึกในประวัติ)
-      </div>
-     </div>
-     <div id="teacher-money-section" class="mb-4 hidden">
-      <div class="text-xs text-green-400 text-center mb-4 bg-green-900/20 border border-green-500/30 rounded-lg p-3">
-       ✅ ระบบใหม่: หักเงินได้ทันที ไม่ต้องรออนุมัติ + บันทึกถาวร + บันทึกเหตุผล
-      </div>
-      <div class="grid grid-cols-4 gap-2 mb-3"><button onclick="quickAdjustMoneyTeacher(100)" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> +100 </button> <button onclick="quickAdjustMoneyTeacher(50)" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> +50 </button> <button onclick="quickAdjustMoneyTeacher(20)" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> +20 </button> <button onclick="quickAdjustMoneyTeacher(10)" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> +10 </button>
-      </div>
-      <div class="grid grid-cols-4 gap-2 mb-3"><button onclick="reduceMoneyDirectly(editingStudent.__backendId, 100)" class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> -100 </button> <button onclick="reduceMoneyDirectly(editingStudent.__backendId, 50)" class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> -50 </button> <button onclick="reduceMoneyDirectly(editingStudent.__backendId, 20)" class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> -20 </button> <button onclick="reduceMoneyDirectly(editingStudent.__backendId, 10)" class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> -10 </button>
-      </div>
-      <div class="flex gap-2 mb-3"><input type="number" id="quick-custom-money-teacher" class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm" placeholder="จำนวนเงิน"> <button onclick="quickAdjustMoneyCustomTeacher()" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"> หักเงิน </button>
-      </div>
-      <div class="flex gap-2 mb-3"><button onclick="resetMoneyToZero()" class="w-full bg-yellow-600/80 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"> 🔄 รีเซ็ตเงินเป็น 0 </button>
-      </div>
-      <div class="text-xs text-slate-400 text-center mb-4 bg-slate-800/50 rounded-lg p-3">
-       💡 ระบบใหม่: หักเงิน/ลดเงิน/รีเซ็ตได้ทันที + บันทึกถาวรทุกรายการ + บันทึกเหตุผล
-      </div>
-     </div>
-     <div id="admin-money-section" class="hidden">
-      <div class="text-xs text-yellow-400 text-center mb-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3">
-       👑 Admin Mode: สิทธิ์เต็ม + บันทึกถาวร + บันทึกเหตุผล
-      </div>
-      <div class="grid grid-cols-4 gap-2 mb-3"><button onclick="quickAdjustMoney(100)" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> +100 </button> <button onclick="quickAdjustMoney(50)" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> +50 </button> <button onclick="quickAdjustMoney(-50)" class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> -50 </button> <button onclick="quickAdjustMoney(-100)" class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"> -100 </button>
-      </div>
-      <div class="flex gap-2 mb-3"><input type="number" id="quick-custom-money" class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm" placeholder="จำนวนเงินที่หัก"> <button onclick="quickAdjustMoneyCustom()" class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"> หักเงิน </button>
-      </div>
-      <div class="flex gap-2"><input type="number" id="quick-exact-money" class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm" placeholder="ตั้งเงินที่ถูกหักเป็น"> <button onclick="quickSetExactMoney()" class="bg-yellow-600/80 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"> ตั้ง </button>
-      </div>
-     </div>
-    </div>
-    <div class="mb-6"><button onclick="viewStudentTransactionHistory()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"> 📋 ดูประวัติการทำรายการ </button>
-    </div>
-    <div class="text-center"><button onclick="closeQuickScoreModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-3 px-8 rounded-lg transition-all"> ปิด </button>
-    </div>
-   </div>
-  </div>
-  
-  <div id="transaction-history-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-  <div class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-4xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
-    <div class="flex items-center justify-between p-6 border-b border-slate-600">
-     <div>
-      <h3 class="text-2xl font-bold gradient-text">📋 ประวัติการทำรายการ</h3>
-      <p id="transaction-history-subtitle" class="text-slate-300 mt-1">ประวัติการเปลี่ยนแปลงคะแนนและเงิน</p>
-     </div><button onclick="closeTransactionHistoryModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"> ✕ ปิด </button>
-    </div>
-    <div class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]">
-     <div id="transaction-history-list" class="space-y-4">
-     </div>
-     <div id="transaction-history-empty" class="text-center py-12 text-slate-400 hidden">
-      <div class="text-6xl mb-4">
-       📋
-      </div>
-      <p class="text-xl">ยังไม่มีประวัติการทำรายการ</p>
-      <p class="text-slate-500 mt-2">ประวัติจะแสดงหลังจากมีการเปลี่ยนแปลงข้อมูล</p>
-     </div>
-    </div>
-   </div>
-  </div>
-  <div id="admin-transaction-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-  <div class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-5xl mx-4 max-h-[90vh] overflow-hidden neon-glow">
-    <div class="flex items-center justify-between p-6 border-b border-slate-600">
-     <div>
-      <h3 class="text-2xl font-bold gradient-text">👑 จัดการประวัติการทำรายการ (Admin)</h3>
-      <p class="text-slate-300 mt-1">Admin สามารถแก้ไข ลบ และจัดการประวัติทั้งหมด</p>
-     </div><button onclick="closeAdminTransactionModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"> ✕ ปิด </button>
-    </div>
-    <div class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]">
-     <div class="mb-6 grid grid-cols-1 lg:grid-cols-4 gap-4">
-      <div><label for="admin-transaction-type-filter" class="block text-sm font-medium text-slate-300 mb-2">📊 ประเภทรายการ</label> <select id="admin-transaction-type-filter" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white"> <option value="">ทั้งหมด</option> <option value="deduct">💸 หักเงิน</option> <option value="reduce">💚 ลดเงิน</option> <option value="reset">🔄 รีเซ็ต</option> <option value="score_change">📊 เปลี่ยนคะแนน</option> </select>
-      </div>
-      <div><label for="admin-transaction-teacher-filter" class="block text-sm font-medium text-slate-300 mb-2">👨‍🏫 อาจารย์</label> <select id="admin-transaction-teacher-filter" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white"> <option value="">ทั้งหมด</option> </select>
-      </div>
-      <div><label for="admin-transaction-search" class="block text-sm font-medium text-slate-300 mb-2">🔍 ค้นหา</label> <input type="text" id="admin-transaction-search" placeholder="ค้นหานักศึกษา..." class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white">
-      </div>
-      <div class="flex items-end"><button id="refresh-admin-transactions" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"> 🔄 รีเฟรช </button>
-      </div>
-     </div>
-     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
-       <div class="text-center">
-        <div class="text-2xl font-bold text-purple-400" id="admin-total-transactions">
-         0
+    <div
+      id="registration-screen"
+      class="hidden min-h-full flex items-center justify-center safe-area-top safe-area-bottom responsive-padding"
+    >
+      <div
+        class="dark-glass neon-glow rounded-2xl responsive-padding w-full modal-responsive card-hover"
+      >
+        <div class="text-center responsive-margin">
+          <div
+            class="mx-auto w-16 h-16 sm:w-20 sm:h-20 glass-effect rounded-full flex items-center justify-center mb-4 sm:mb-6 floating-animation"
+          >
+            <span class="text-2xl sm:text-3xl">📝</span>
+          </div>
+          <h1 class="responsive-title font-bold text-white mb-2 sm:mb-3">
+            ลงทะเบียนข้อมูลส่วนตัว
+          </h1>
+          <p class="responsive-text text-slate-300 font-medium">
+            กรอกข้อมูลเพิ่มเติมเพื่อเข้าสู่ระบบ
+          </p>
+          <p
+            id="minecraft-username-display"
+            class="responsive-text text-blue-400 font-bold mt-2"
+          >
+            🎮 Minecraft: -
+          </p>
         </div>
-        <div class="text-sm text-slate-400">
-         รายการทั้งหมด
+        <form id="registration-form" class="form-mobile">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 responsive-margin"
+          >
+            <div>
+              <label
+                for="first-name"
+                class="block responsive-text font-semibold text-white mb-2"
+                >ชื่อ</label
+              >
+              <input
+                type="text"
+                id="first-name"
+                required
+                class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 border-0 touch-friendly font-medium"
+                placeholder="กรอกชื่อ"
+              />
+            </div>
+            <div>
+              <label
+                for="last-name"
+                class="block responsive-text font-semibold text-white mb-2"
+                >นามสกุล</label
+              >
+              <input
+                type="text"
+                id="last-name"
+                required
+                class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 border-0 touch-friendly font-medium"
+                placeholder="กรอกนามสกุล"
+              />
+            </div>
+          </div>
+          <div class="responsive-margin">
+            <label
+              class="block responsive-text font-semibold text-white mb-3 sm:mb-4"
+              >🏠 เลือกบ้านของคุณ</label
+            >
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div class="house-option" data-house="hades">
+                <input
+                  type="radio"
+                  id="house-hades"
+                  name="house"
+                  value="hades"
+                  class="hidden"
+                  required
+                />
+                <label
+                  for="house-hades"
+                  class="block cursor-pointer touch-friendly"
+                >
+                  <div
+                    class="glass-effect rounded-xl responsive-padding text-center transition-all duration-300 hover:bg-black/20 border-2 border-transparent hover:border-black"
+                  >
+                    <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">⚫</div>
+                    <h3 class="responsive-subtitle font-bold text-white">
+                      เฮเดส
+                    </h3>
+                  </div></label
+                >
+              </div>
+              <div class="house-option" data-house="ceres">
+                <input
+                  type="radio"
+                  id="house-ceres"
+                  name="house"
+                  value="ceres"
+                  class="hidden"
+                  required
+                />
+                <label
+                  for="house-ceres"
+                  class="block cursor-pointer touch-friendly"
+                >
+                  <div
+                    class="glass-effect rounded-xl responsive-padding text-center transition-all duration-300 hover:bg-white/20 border-2 border-transparent hover:border-white"
+                  >
+                    <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">⚪</div>
+                    <h3 class="responsive-subtitle font-bold text-white">
+                      เซเรส
+                    </h3>
+                  </div></label
+                >
+              </div>
+            </div>
+          </div>
+          <div class="responsive-margin">
+            <label
+              class="block responsive-text font-semibold text-white mb-3 sm:mb-4"
+              >🎭 บทบาทของคุณ</label
+            >
+            <div
+              class="glass-effect rounded-xl responsive-padding text-center border-2 border-blue-500 bg-blue-50"
+            >
+              <div class="text-2xl sm:text-3xl mb-2">👨‍🎓</div>
+              <h4 class="responsive-text font-bold text-white">
+                นักเรียนทั่วไป
+              </h4>
+              <p class="text-xs text-slate-300 mt-1">
+                บทบาทเริ่มต้น - อาจารย์สามารถมอบบทบาทพิเศษให้ภายหลัง
+              </p>
+            </div>
+            <input type="hidden" name="role" value="normal" required />
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <button
+              type="button"
+              id="back-to-login"
+              class="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 touch-friendly"
+            >
+              ← กลับ
+            </button>
+            <button
+              type="submit"
+              id="register-button"
+              class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center touch-friendly"
+            >
+              <span>✅ ลงทะเบียน</span>
+              <div
+                id="register-loading"
+                class="loading-spinner ml-2 hidden"
+              ></div>
+            </button>
+          </div>
+        </form>
+        <div
+          id="registration-error"
+          class="mt-4 p-4 glass-effect border border-red-400 text-red-300 rounded-xl hidden"
+        >
+          <div class="flex items-center">
+            <svg
+              class="w-5 h-5 text-red-400 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewbox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path></svg
+            ><span id="registration-error-message">เกิดข้อผิดพลาด</span>
+          </div>
         </div>
-       </div>
       </div>
-      <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
-       <div class="text-center">
-        <div class="text-2xl font-bold text-red-400" id="admin-total-deductions">
-         0
-        </div>
-        <div class="text-sm text-slate-400">
-         การหักเงิน
-        </div>
-       </div>
-      </div>
-      <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
-       <div class="text-center">
-        <div class="text-2xl font-bold text-green-400" id="admin-total-reductions">
-         0
-        </div>
-        <div class="text-sm text-slate-400">
-         การลดเงิน
-        </div>
-       </div>
-      </div>
-      <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
-       <div class="text-center">
-        <div class="text-2xl font-bold text-blue-400" id="admin-total-score-changes">
-         0
-        </div>
-        <div class="text-sm text-slate-400">
-         เปลี่ยนคะแนน
-        </div>
-       </div>
-      </div>
-     </div>
-     <div id="admin-transaction-list" class="space-y-4">
-     </div>
-     <div id="admin-transaction-empty" class="text-center py-12 text-slate-400 hidden">
-      <div class="text-6xl mb-4">
-       📋
-      </div>
-      <p class="text-xl">ไม่พบประวัติการทำรายการ</p>
-      <p class="text-slate-500 mt-2">ลองเปลี่ยนตัวกรองหรือค้นหาใหม่</p>
-     </div>
     </div>
-   </div>
-  </div>
-  <div id="edit-student-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom">
-  <div class="dark-glass rounded-xl shadow-2xl p-6 w-[92vw] sm:w-[86vw] md:w-[78vw] max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
-    <div class="flex items-center justify-between mb-4">
-     <div>
-      <h3 class="text-xl font-semibold text-white">แก้ไขข้อมูลนักศึกษา</h3>
-      <p id="edit-student-subtitle" class="text-sm text-slate-300 mt-1">-</p>
-     </div>
-     <button type="button" onclick="closeEditStudentModal()" class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-1 px-3 rounded-lg text-sm">✕ ปิด</button>
+
+    <div id="student-view" class="hidden safe-area-top safe-area-bottom">
+      <div class="responsive-container responsive-padding landscape-compact">
+        <header
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center responsive-margin"
+        >
+          <div class="mb-4 sm:mb-0">
+            <h1 class="responsive-title font-bold text-white mb-2">
+              👨‍🎓 ข้อมูลนักศึกษา
+            </h1>
+            <p class="responsive-text text-slate-300 font-medium">
+              ดูข้อมูลและคะแนนของคุณ (เฉพาะดูเท่านั้น)
+            </p>
+            <div class="mt-2 flex items-center gap-2">
+              <div id="student-data-status" class="data-saved">
+                💾 ข้อมูลซิงค์แล้ว
+              </div>
+              <span id="student-last-update" class="text-xs text-slate-400">
+                อัปเดต: กำลังโหลด...
+              </span>
+            </div>
+          </div>
+          <button
+            id="student-logout-button"
+            class="bg-red-500 hover:bg-red-600 text-white font-semibold btn-responsive rounded-lg transition duration-200 touch-friendly w-full sm:w-auto"
+          >
+            ออกจากระบบ
+          </button>
+        </header>
+        <div
+          class="bg-gray-800 rounded-xl shadow-lg responsive-padding responsive-margin border border-gray-600"
+        >
+          <div class="text-center">
+            <div
+              id="student-house-icon"
+              class="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mb-3 sm:mb-4"
+            >
+              <span class="text-2xl sm:text-3xl">🎮</span>
+            </div>
+            <h2
+              id="student-real-name"
+              class="responsive-title font-bold text-white mb-2"
+            >
+              -
+            </h2>
+            <p
+              id="student-minecraft-name"
+              class="responsive-subtitle text-blue-400 mb-2 font-bold"
+            >
+              🎮 Minecraft: -
+            </p>
+            <p
+              id="student-house-display"
+              class="responsive-text text-gray-300 mb-2 sm:mb-3 font-semibold"
+            >
+              🏠 บ้าน: -
+            </p>
+            <p
+              id="student-role-display"
+              class="responsive-text text-gray-300 mb-3 sm:mb-4 font-semibold"
+            >
+              🎭 บทบาท: -
+            </p>
+            <p
+              id="student-id-display"
+              class="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-6 font-mono break-all"
+            >
+              UUID: -
+            </p>
+            <div
+              class="bg-gray-700 rounded-xl responsive-padding border border-gray-600"
+            >
+              <h3 class="responsive-subtitle font-bold text-white mb-3 sm:mb-4">
+                คะแนนของคุณ
+              </h3>
+              <div class="flex items-center justify-center">
+                <span
+                  id="student-score"
+                  class="text-4xl sm:text-6xl font-bold text-blue-400"
+                  >0</span
+                >
+                <span
+                  class="responsive-subtitle text-gray-300 ml-2 font-semibold"
+                  >คะแนน</span
+                >
+              </div>
+              <div id="student-rank" class="mt-3 sm:mt-4"></div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-gray-800 rounded-xl shadow-lg responsive-padding border border-gray-600"
+        >
+          <h3 class="responsive-subtitle font-bold text-white mb-3 sm:mb-4">
+            สถิติของชั้น
+          </h3>
+          <div class="auto-grid-sm">
+            <div
+              class="text-center responsive-padding bg-gray-700 rounded-lg border border-gray-600"
+            >
+              <p class="responsive-text text-gray-300 font-semibold">
+                คะแนนเฉลี่ย
+              </p>
+              <p
+                id="class-average"
+                class="text-xl sm:text-2xl font-bold text-blue-400"
+              >
+                0
+              </p>
+            </div>
+            <div
+              class="text-center responsive-padding bg-gray-700 rounded-lg border border-gray-600"
+            >
+              <p class="responsive-text text-gray-300 font-semibold">
+                คะแนนสูงสุด
+              </p>
+              <p
+                id="class-highest"
+                class="text-xl sm:text-2xl font-bold text-green-400"
+              >
+                0
+              </p>
+            </div>
+            <div
+              class="text-center responsive-padding bg-gray-700 rounded-lg border border-gray-600"
+            >
+              <p class="responsive-text text-gray-300 font-semibold">
+                จำนวนนักศึกษา
+              </p>
+              <p
+                id="class-total"
+                class="text-xl sm:text-2xl font-bold text-purple-400"
+              >
+                0
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <form id="edit-student-form" class="space-y-4">
-     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div>
-       <label for="edit-student-first-name" class="block text-sm font-medium text-slate-300 mb-1">ชื่อ</label>
-       <input type="text" id="edit-student-first-name" class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm">
+
+    <div id="teacher-view" class="hidden min-h-full p-6">
+      <div class="max-w-7xl mx-auto">
+        <header
+          class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8"
+        >
+          <div class="mb-4 lg:mb-0">
+            <h1 class="text-3xl font-bold text-white mb-2">
+              🎓 ระบบจัดการนักศึกษา (อาจารย์)
+            </h1>
+            <p class="text-slate-300">จัดการคะแนนและเงิน พร้อมระบบบันทึกถาวร</p>
+            <div class="flex items-center mt-2 gap-4">
+              <div class="flex items-center text-sm text-green-400">
+                <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                <span>ระบบพร้อมใช้งาน</span>
+              </div>
+              <div id="teacher-data-status" class="data-saved">
+                💾 ข้อมูลซิงค์แล้ว
+              </div>
+              <div class="text-sm text-slate-400">
+                <span id="teacher-last-sync">อัปเดตล่าสุด: กำลังโหลด...</span>
+              </div>
+              <button
+                id="teacher-refresh-data-button"
+                class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded-lg transition-colors"
+              >
+                🔄 รีเฟรช
+              </button>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button
+              id="teacher-backup-button"
+              class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              💾 สำรองข้อมูล
+            </button>
+            <button
+              id="super-admin-login-button"
+              class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              👑 Admin
+            </button>
+            <button
+              id="teacher-logout-button"
+              class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              ออกจากระบบ
+            </button>
+          </div>
+        </header>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div class="dark-glass p-6">
+            <div class="flex items-center">
+              <div class="p-3 glass-effect rounded-full">
+                <span class="text-2xl">👥</span>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-slate-300">จำนวนนักศึกษา</p>
+                <p
+                  id="teacher-total-students"
+                  class="text-3xl font-bold text-white"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="dark-glass p-6">
+            <div class="flex items-center">
+              <div class="p-3 glass-effect rounded-full">
+                <span class="text-2xl">📊</span>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-slate-300">คะแนนเฉลี่ย</p>
+                <p
+                  id="teacher-average-score"
+                  class="text-3xl font-bold text-white"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="dark-glass p-6">
+            <div class="flex items-center">
+              <div class="p-3 glass-effect rounded-full">
+                <span class="text-2xl">⭐</span>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-slate-300">คะแนนสูงสุด</p>
+                <p
+                  id="teacher-highest-score"
+                  class="text-3xl font-bold text-white"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="dark-glass p-6">
+            <div class="flex items-center">
+              <div class="p-3 glass-effect rounded-full">
+                <span class="text-2xl">📋</span>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-slate-300">รายการทำงาน</p>
+                <p
+                  id="teacher-total-transactions"
+                  class="text-3xl font-bold text-white"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dark-glass p-6 mb-8">
+          <h2 class="text-2xl font-semibold text-white mb-4">
+            💾 จัดการข้อมูลถาวร
+          </h2>
+          <p class="text-slate-300 mb-6">
+            ระบบบันทึกข้อมูลทุกการเปลี่ยนแปลงแบบถาวร สามารถสำรอง กู้คืน
+            และจัดการได้
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button
+              id="view-all-transactions-button"
+              class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              📋 ดูประวัติทั้งหมด
+              <span
+                id="all-transactions-count"
+                class="bg-white/20 px-2 py-1 rounded-full text-sm"
+                >0</span
+              >
+            </button>
+            <button
+              id="export-data-button"
+              class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              📤 ส่งออกข้อมูล
+            </button>
+            <button
+              id="import-data-button"
+              class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              📥 นำเข้าข้อมูล
+            </button>
+          </div>
+        </div>
+        <div class="dark-glass p-6 mb-8">
+          <h2 class="text-2xl font-semibold text-white mb-4">
+            📊 จัดการคะแนนรายบุคคล
+          </h2>
+          <p class="text-slate-300 mb-6">
+            คลิกที่ชื่อนักศึกษาเพื่อจัดการคะแนนและเงิน
+            (บันทึกถาวรทุกการเปลี่ยนแปลง)
+          </p>
+          <div
+            id="teacher-score-cards-container"
+            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
+          ></div>
+          <div id="teacher-score-cards-empty" class="text-center py-12">
+            <div class="flex flex-col items-center">
+              <span class="text-6xl mb-4">👥</span>
+              <p class="text-xl text-white mb-2">ยังไม่มีข้อมูลนักศึกษา</p>
+              <p class="text-slate-400">รอให้นักศึกษาลงทะเบียนเข้าสู่ระบบ</p>
+            </div>
+          </div>
+        </div>
+        <div class="dark-glass overflow-hidden">
+          <div class="p-6 border-b border-slate-600">
+            <div class="flex justify-between items-center">
+              <h2 class="text-2xl font-semibold text-white">
+                📋 รายชื่อนักศึกษาและคะแนน
+              </h2>
+              <div class="text-sm text-slate-400">
+                <span class="inline-flex items-center">
+                  📊 ข้อมูลจาก Canva Sheet (อัปเดตแบบเรียลไทม์)
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table class="w-full table-responsive">
+              <thead class="glass-effect">
+                <tr>
+                  <th
+                    class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    👤 ชื่อ-นามสกุล
+                  </th>
+                  <th
+                    class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    🎮 Username
+                  </th>
+                  <th
+                    class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    🏠 บ้าน
+                  </th>
+                  <th
+                    class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    🎭 บทบาท
+                  </th>
+                  <th
+                    class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    คะแนน
+                  </th>
+                  <th
+                    class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    💰 เงิน
+                  </th>
+                  <th
+                    class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    จัดการ
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="teacher-students-list"
+                class="divide-y divide-slate-600"
+              >
+                <tr id="teacher-empty-state">
+                  <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+                    <div class="flex flex-col items-center">
+                      <span class="text-6xl mb-6">👥</span>
+                      <p class="text-xl text-white mb-2">
+                        ยังไม่มีข้อมูลผู้เล่น
+                      </p>
+                      <p class="text-slate-400">
+                        รอให้ผู้เล่น Minecraft เข้าสู่ระบบ
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div>
-       <label for="edit-student-last-name" class="block text-sm font-medium text-slate-300 mb-1">นามสกุล</label>
-       <input type="text" id="edit-student-last-name" class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm">
-      </div>
-     </div>
-     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div>
-       <label for="edit-student-username" class="block text-sm font-medium text-slate-300 mb-1">Username</label>
-       <input type="text" id="edit-student-username" class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm">
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-       <div>
-        <label for="edit-student-score" class="block text-sm font-medium text-slate-300 mb-1">คะแนน</label>
-        <input type="number" id="edit-student-score" class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm">
-       </div>
-       <div>
-        <label for="edit-student-money" class="block text-sm font-medium text-slate-300 mb-1">ยอดเงินหัก</label>
-        <input type="number" id="edit-student-money" class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm">
-       </div>
-      </div>
-     </div>
-     <div>
-      <p class="text-sm font-medium text-slate-300 mb-2">บ้าน</p>
-      <div class="grid grid-cols-3 gap-3">
-       <div class="edit-house-option">
-        <label class="block cursor-pointer">
-         <input type="radio" name="edit-house" value="hades" class="hidden">
-         <div class="glass-effect rounded-lg px-3 py-2 text-center border-2 border-transparent text-sm text-slate-200">
-          <div class="text-xl mb-1">🐉</div>
-          <div>Hades</div>
-         </div>
-        </label>
-       </div>
-       <div class="edit-house-option">
-        <label class="block cursor-pointer">
-         <input type="radio" name="edit-house" value="ceres" class="hidden">
-         <div class="glass-effect rounded-lg px-3 py-2 text-center border-2 border-transparent text-sm text-slate-200">
-          <div class="text-xl mb-1">🌿</div>
-          <div>Ceres</div>
-         </div>
-        </label>
-       </div>
-       <div class="edit-house-option">
-        <label class="block cursor-pointer">
-         <input type="radio" name="edit-house" value="other" class="hidden">
-         <div class="glass-effect rounded-lg px-3 py-2 text-center border-2 border-transparent text-sm text-slate-200">
-          <div class="text-xl mb-1">🏠</div>
-          <div>อื่น ๆ</div>
-         </div>
-        </label>
-       </div>
-      </div>
-     </div>
-     <div>
-      <p class="text-sm font-medium text-slate-300 mb-2">บทบาท</p>
-      <div class="grid grid-cols-2 gap-3">
-       <div class="edit-role-option">
-        <label class="block cursor-pointer">
-         <input type="radio" name="edit-role" value="normal" class="hidden">
-         <div class="glass-effect rounded-lg px-3 py-2 border-2 border-transparent text-sm text-slate-200 text-center">
-          นักศึกษา
-         </div>
-        </label>
-       </div>
-       <div class="edit-role-option">
-        <label class="block cursor-pointer">
-         <input type="radio" name="edit-role" value="medical" class="hidden">
-         <div class="glass-effect rounded-lg px-3 py-2 border-2 border-transparent text-sm text-slate-200 text-center">
-          เวรพยาบาล
-         </div>
-        </label>
-       </div>
-       <div class="edit-role-option">
-        <label class="block cursor-pointer">
-         <input type="radio" name="edit-role" value="council" class="hidden">
-         <div class="glass-effect rounded-lg px-3 py-2 border-2 border-transparent text-sm text-slate-200 text-center">
-          สภานักศึกษา
-         </div>
-        </label>
-       </div>
-       <div class="edit-role-option">
-        <label class="block cursor-pointer">
-         <input type="radio" name="edit-role" value="senior" class="hidden">
-         <div class="glass-effect rounded-lg px-3 py-2 border-2 border-transparent text-sm text-slate-200 text-center">
-          พี่สตาฟ
-         </div>
-        </label>
-       </div>
-      </div>
-     </div>
-     <div class="glass-effect rounded-lg p-3 text-xs text-slate-300 space-y-1">
-      <div class="flex justify-between">
-       <span class="text-slate-400">ประเภทผู้เล่น:</span>
-       <span id="edit-student-player-type" class="font-medium text-white">-</span>
-      </div>
-      <div class="flex justify-between">
-       <span class="text-slate-400">ID ภายในระบบ:</span>
-       <span id="edit-student-id" class="font-mono text-slate-200 text-[11px]">-</span>
-      </div>
-      <div class="flex justify-between">
-       <span class="text-slate-400">สร้างเมื่อ:</span>
-       <span id="edit-student-created" class="text-slate-200">-</span>
-      </div>
-      <div class="flex justify-between">
-       <span class="text-slate-400">แก้ไขล่าสุด:</span>
-       <span id="edit-student-updated" class="text-slate-200">-</span>
-      </div>
-     </div>
-     <div class="flex gap-4 mt-2">
-      <button id="save-student-button" type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center text-sm">
-       <span>บันทึกการเปลี่ยนแปลง</span>
-       <div id="save-student-loading" class="loading-spinner ml-2 hidden"></div>
-      </button>
-      <button type="button" onclick="closeEditStudentModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 text-sm">
-       ยกเลิก
-      </button>
-     </div>
-    </form>
-   </div>
-  </div>
-  
-  <div id="edit-transaction-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="dark-glass rounded-xl shadow-2xl p-6 w-[92vw] sm:w-[86vw] md:w-[78vw] max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
-    <div class="flex items-center justify-between mb-4">
-     <h3 class="text-xl font-semibold text-white">✏️ แก้ไขประวัติการทำรายการ</h3>
-     <div class="text-xs text-yellow-400 bg-yellow-900/20 border border-yellow-500/30 rounded px-2 py-1">
-      👑 Admin Only
-     </div>
     </div>
-    <div id="edit-transaction-form">
-    </div>
-    <div class="flex gap-4 mt-6"><button id="save-transaction-button" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"> <span>💾 บันทึกการแก้ไข</span>
-      <div id="save-transaction-loading" class="loading-spinner ml-2 hidden"></div></button> <button id="cancel-edit-transaction" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"> ยกเลิก </button>
-    </div>
-    <div class="mt-4 text-xs text-slate-400 bg-slate-800/50 rounded-lg p-3">
-     <div class="flex items-start">
-      <svg class="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
-      </svg>
-      <div>
-       <p class="font-medium text-slate-300 mb-1">⚠️ คำเตือน:</p>
-       <ul class="space-y-1">
-        <li>• การแก้ไขประวัติจะส่งผลต่อความถูกต้องของข้อมูล</li>
-        <li>• ควรแก้ไขเฉพาะกรณีจำเป็นเท่านั้น</li>
-        <li>• การเปลี่ยนแปลงจะถูกบันทึกถาวร</li>
-       </ul>
+
+    <div id="admin-view" class="hidden min-h-full p-6">
+      <div class="max-w-7xl mx-auto">
+        <header class="flex justify-between items-center mb-8">
+          <div>
+            <h1 class="text-4xl font-bold text-white mb-3">
+              👑 ระบบจัดการนักศึกษา - Super Admin
+            </h1>
+            <p class="text-slate-300 text-lg">
+              จัดการข้อมูลนักศึกษาและระบบทั้งหมด พร้อมระบบบันทึกถาวร
+            </p>
+            <div class="flex items-center mt-2 gap-4">
+              <div class="flex items-center text-sm text-yellow-400">
+                <div class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
+                <span>👑 Super Admin Mode</span>
+              </div>
+              <div id="admin-data-status" class="data-saved">
+                💾 ข้อมูลซิงค์แล้ว
+              </div>
+              <div class="text-sm text-slate-400">
+                <span id="admin-last-sync">อัปเดตล่าสุด: กำลังโหลด...</span>
+              </div>
+              <button
+                id="admin-refresh-data-button"
+                class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded-lg transition-colors"
+              >
+                🔄 รีเฟรช
+              </button>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button
+              id="admin-backup-button"
+              class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            >
+              💾 สำรองข้อมูล
+            </button>
+            <button
+              id="admin-logout-button"
+              class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            >
+              ออกจากระบบ
+            </button>
+          </div>
+        </header>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div class="dark-glass p-6">
+            <div class="flex items-center">
+              <div class="p-3 glass-effect rounded-full">
+                <span class="text-2xl">👥</span>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-slate-300">จำนวนนักศึกษา</p>
+                <p
+                  id="admin-total-students"
+                  class="text-3xl font-bold text-white"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="dark-glass p-6">
+            <div class="flex items-center">
+              <div class="p-3 glass-effect rounded-full">
+                <span class="text-2xl">📊</span>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-slate-300">คะแนนเฉลี่ย</p>
+                <p
+                  id="admin-average-score"
+                  class="text-3xl font-bold text-white"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="dark-glass p-6">
+            <div class="flex items-center">
+              <div class="p-3 glass-effect rounded-full">
+                <span class="text-2xl">⭐</span>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-slate-300">คะแนนสูงสุด</p>
+                <p
+                  id="admin-highest-score"
+                  class="text-3xl font-bold text-white"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="dark-glass p-6">
+            <div class="flex items-center">
+              <div class="p-3 glass-effect rounded-full">
+                <span class="text-2xl">💾</span>
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-slate-300">ข้อมูลทั้งหมด</p>
+                <p
+                  id="admin-total-records"
+                  class="text-3xl font-bold text-white"
+                >
+                  0
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dark-glass rounded-2xl p-8 mb-8 super-admin-glow">
+          <h2 class="text-3xl font-semibold gradient-text mb-6">
+            💾 จัดการข้อมูลถาวรขั้นสูง
+          </h2>
+          <p class="text-slate-300 mb-6">
+            ระบบบันทึกข้อมูลทุกการเปลี่ยนแปลงแบบถาวร สามารถสำรอง กู้คืน แก้ไข
+            และลบได้
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button
+              id="admin-view-all-data-button"
+              class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              📋 ดูข้อมูลทั้งหมด
+              <span
+                id="admin-all-records-count"
+                class="bg-white/20 px-2 py-1 rounded-full text-sm"
+                >0</span
+              >
+            </button>
+            <button
+              id="admin-export-data-button"
+              class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              📤 ส่งออกข้อมูล
+            </button>
+            <button
+              id="admin-import-data-button"
+              class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              📥 นำเข้าข้อมูล
+            </button>
+            <button
+              id="admin-clear-data-button"
+              class="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              🗑️ ล้างข้อมูล
+            </button>
+          </div>
+        </div>
+        <div class="dark-glass p-6 mb-8">
+          <h2 class="text-2xl font-semibold text-white mb-6">
+            ➕ เพิ่มนักศึกษาใหม่
+          </h2>
+          <p class="text-slate-300 mb-6">
+            Super Admin สามารถเพิ่มนักศึกษาใหม่เข้าสู่ระบบได้ (ทั้ง Minecraft
+            Player และ Custom Username) โดยไม่ต้องรอให้นักศึกษาลงทะเบียนเอง
+          </p>
+          <form
+            id="admin-manual-add-form"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6"
+          >
+            <div>
+              <label
+                for="admin-manual-first-name"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >ชื่อ</label
+              >
+              <input
+                type="text"
+                id="admin-manual-first-name"
+                required
+                class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0"
+                placeholder="กรอกชื่อ"
+              />
+            </div>
+            <div>
+              <label
+                for="admin-manual-last-name"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >นามสกุล</label
+              >
+              <input
+                type="text"
+                id="admin-manual-last-name"
+                required
+                class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0"
+                placeholder="กรอกนามสกุล"
+              />
+            </div>
+            <div>
+              <label
+                for="admin-manual-minecraft"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >🎮 Username (Minecraft หรือกำหนดเอง)</label
+              >
+              <input
+                type="text"
+                id="admin-manual-minecraft"
+                required
+                class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0"
+                placeholder="กรอก Username สำหรับเข้าสู่ระบบ"
+              />
+            </div>
+            <div>
+              <label
+                for="admin-manual-house"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >บ้าน</label
+              >
+              <select
+                id="admin-manual-house"
+                required
+                class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white border-0 bg-slate-700"
+              >
+                <option value="">เลือกบ้าน</option>
+                <option value="hades">⚫ เฮเดส</option>
+                <option value="ceres">⚪ เซเรส</option>
+                <option value="other">🏠 อื่นๆ</option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="admin-manual-role"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >บทบาท</label
+              >
+              <select
+                id="admin-manual-role"
+                required
+                class="w-full px-4 py-3 glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white border-0 bg-slate-700"
+              >
+                <option value="">เลือกบทบาท</option>
+                <option value="normal">👨‍🎓 นักเรียนทั่วไป</option>
+                <option value="medical">⚕️ นักเรียนแพทย์</option>
+                <option value="council">🏛️ สภานักเรียน</option>
+                <option value="senior">🎖️ รุ่นพี่</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button
+                type="submit"
+                id="admin-manual-add-button"
+                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center"
+              >
+                <span>➕ เพิ่มนักศึกษา</span>
+                <div
+                  id="admin-manual-add-loading"
+                  class="loading-spinner ml-2 hidden"
+                ></div>
+              </button>
+            </div>
+          </form>
+          <div class="text-sm text-slate-400 bg-slate-800/50 rounded-lg p-4">
+            <div class="flex items-start">
+              <svg
+                class="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewbox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <div>
+                <p class="font-medium text-slate-300 mb-1">💡 คำแนะนำ:</p>
+                <ul class="space-y-1 text-xs">
+                  <li>
+                    •
+                    <strong>ชื่อ นามสกุล Username และบ้าน</strong>
+                    จำเป็นต้องกรอกทั้งหมด
+                  </li>
+                  <li>
+                    • <strong>Username</strong> สามารถเป็น Minecraft Username
+                    หรือ Username ที่กำหนดเองก็ได้
+                  </li>
+                  <li>• ระบบจะตรวจสอบว่า Username ซ้ำหรือไม่</li>
+                  <li>
+                    • นักศึกษาสามารถใช้
+                    <strong>Username นี้</strong> เข้าสู่ระบบได้ทันที
+                  </li>
+                  <li>• สามารถจัดการคะแนนได้เหมือนนักศึกษาปกติ</li>
+                  <li>• ข้อมูลจะถูกบันทึกใน Canva Sheet แบบเรียลไทม์และถาวร</li>
+                  <li>
+                    • <span class="text-green-400">🎮 Minecraft Player</span> =
+                    ผู้เล่น Minecraft จริง |
+                    <span class="text-blue-400">👤 Custom Player</span> =
+                    Username ที่กำหนดเอง
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dark-glass rounded-2xl p-8 mb-8 super-admin-glow">
+          <div
+            class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4"
+          >
+            <div>
+              <h2 class="text-3xl font-semibold gradient-text mb-3">
+                👑 จัดการประวัติการทำรายการ (Admin)
+              </h2>
+              <p class="text-slate-300">
+                Admin สามารถดู แก้ไข ลบ และจัดการประวัติการทำรายการทั้งหมด
+              </p>
+              <p class="text-slate-400 text-sm mt-1">
+                🔧 สิทธิ์เต็ม: แก้ไขข้อมูล ลบรายการ และจัดการประวัติทั้งหมด
+              </p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button
+                id="show-all-transactions-admin-button"
+                class="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center gap-2"
+              >
+                📋 จัดการประวัติทั้งหมด
+                <span
+                  id="admin-transactions-count"
+                  class="bg-white/20 px-2 py-1 rounded-full text-sm"
+                  >0</span
+                >
+              </button>
+              <button
+                id="show-teacher-transactions-button"
+                class="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center gap-2"
+              >
+                👨‍🏫 ประวัติอาจารย์
+                <span
+                  id="teacher-transactions-count"
+                  class="bg-white/20 px-2 py-1 rounded-full text-sm"
+                  >0</span
+                >
+              </button>
+              <button
+                id="show-refund-history-button"
+                class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center gap-2"
+              >
+                💚 ประวัติการคืนเงิน
+                <span
+                  id="refund-history-count"
+                  class="bg-white/20 px-2 py-1 rounded-full text-sm"
+                  >0</span
+                >
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="dark-glass rounded-2xl p-8 mb-8 super-admin-glow">
+          <h2 class="text-3xl font-semibold gradient-text mb-6">
+            📊 จัดการคะแนนรายบุคคล
+          </h2>
+          <p class="text-slate-300 mb-6">
+            คลิกที่ชื่อนักศึกษาเพื่อจัดการคะแนนและเงิน
+            (บันทึกถาวรทุกการเปลี่ยนแปลง)
+          </p>
+          <div
+            id="admin-score-cards-container"
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4"
+          ></div>
+          <div id="admin-score-cards-empty" class="text-center py-12">
+            <div class="flex flex-col items-center">
+              <svg
+                class="w-16 h-16 text-slate-500 mb-6 floating-animation"
+                fill="none"
+                stroke="currentColor"
+                viewbox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                ></path>
+              </svg>
+              <p class="text-xl text-white mb-2">ยังไม่มีข้อมูลนักศึกษา</p>
+              <p class="text-slate-400">รอให้นักศึกษาลงทะเบียนเข้าสู่ระบบ</p>
+            </div>
+          </div>
+        </div>
+        <div class="dark-glass rounded-2xl overflow-hidden super-admin-glow">
+          <div class="px-8 py-6 glass-effect border-b border-slate-600">
+            <div class="flex justify-between items-center">
+              <h2 class="text-3xl font-semibold gradient-text">
+                📋 รายชื่อนักศึกษาและคะแนน
+              </h2>
+              <div class="text-sm text-slate-400">
+                <span class="inline-flex items-center">
+                  <svg
+                    class="w-4 h-4 mr-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewbox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    ></path>
+                  </svg>
+                  📊 ข้อมูลจาก Canva Sheet (อัปเดตแบบเรียลไทม์และถาวร)
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="glass-effect">
+                <tr>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    👤 ชื่อ-นามสกุล
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    🎮 Username
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    🏠 บ้าน
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    🎭 บทบาท
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    คะแนน
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    💰 เงิน
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-slate-300 uppercase tracking-wider"
+                  >
+                    จัดการ
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="admin-students-list" class="divide-y divide-slate-600">
+                <tr id="admin-empty-state">
+                  <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+                    <div class="flex flex-col items-center">
+                      <svg
+                        class="w-16 h-16 text-slate-500 mb-6 floating-animation"
+                        fill="none"
+                        stroke="currentColor"
+                        viewbox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                        ></path>
+                      </svg>
+                      <p class="text-xl text-white mb-2">
+                        ยังไม่มีข้อมูลผู้เล่น
+                      </p>
+                      <p class="text-slate-400">
+                        รอให้ผู้เล่น Minecraft เข้าสู่ระบบ
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-     </div>
     </div>
-   </div>
-  </div>
-  <script src="assets/js/app.js"></script>
- </body>
+
+    <div
+      id="super-admin-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom"
+    >
+      <div
+        class="dark-glass super-admin-glow rounded-2xl shadow-2xl responsive-padding modal-responsive"
+      >
+        <div class="text-center responsive-margin">
+          <div
+            class="mx-auto w-12 h-12 sm:w-16 sm:h-16 glass-effect rounded-full flex items-center justify-center mb-3 sm:mb-4 floating-animation"
+          >
+            <span class="text-xl sm:text-2xl">👑</span>
+          </div>
+          <h3 class="responsive-subtitle font-bold text-white mb-2">
+            Super Admin Login
+          </h3>
+          <p class="responsive-text text-slate-300">
+            กรอกรหัส Super Admin เพื่อเข้าสู่ระบบจัดการขั้นสูง
+          </p>
+        </div>
+        <form id="super-admin-form" class="form-mobile">
+          <div class="responsive-margin">
+            <label
+              for="super-admin-password"
+              class="block responsive-text font-medium text-slate-300 mb-2 sm:mb-3"
+              >รหัส Super Admin</label
+            >
+            <input
+              type="password"
+              id="super-admin-password"
+              required
+              class="w-full responsive-padding glass-effect rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-center responsive-text text-white placeholder-slate-400 border-0 touch-friendly"
+              placeholder="กรอกรหัส Super Admin"
+            />
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <button
+              type="submit"
+              id="super-admin-login-submit"
+              class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 flex items-center justify-center touch-friendly"
+            >
+              <span>👑 เข้าสู่ระบบ</span>
+              <div
+                id="super-admin-loading"
+                class="loading-spinner ml-2 hidden"
+              ></div>
+            </button>
+            <button
+              type="button"
+              id="cancel-super-admin"
+              class="flex-1 bg-gray-600/80 hover:bg-gray-600 text-white font-semibold btn-responsive rounded-xl transition-all duration-300 touch-friendly"
+            >
+              ยกเลิก
+            </button>
+          </div>
+        </form>
+        <div
+          id="super-admin-error"
+          class="mt-4 p-4 glass-effect border border-red-400 text-red-300 rounded-xl hidden"
+        >
+          <div class="flex items-center">
+            <svg
+              class="w-5 h-5 text-red-400 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewbox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path></svg
+            ><span id="super-admin-error-message"
+              >รหัส Super Admin ไม่ถูกต้อง</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="data-management-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom"
+    >
+      <div
+        class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-5xl mx-4 max-h-[90vh] overflow-hidden neon-glow"
+      >
+        <div
+          class="flex items-center justify-between p-6 border-b border-slate-600"
+        >
+          <div>
+            <h3 class="text-2xl font-bold gradient-text">
+              💾 จัดการข้อมูลถาวร
+            </h3>
+            <p class="text-slate-300 mt-1">
+              ดู แก้ไข ลบ และจัดการข้อมูลทั้งหมดในระบบ
+            </p>
+          </div>
+          <button
+            onclick="closeDataManagementModal()"
+            class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+          >
+            ✕ ปิด
+          </button>
+        </div>
+        <div
+          class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]"
+        >
+          <div class="mb-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div>
+              <label
+                for="data-type-filter"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >📊 ประเภทข้อมูล</label
+              >
+              <select
+                id="data-type-filter"
+                class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white"
+              >
+                <option value="">ทั้งหมด</option>
+                <option value="student">👥 ข้อมูลนักศึกษา</option>
+                <option value="transaction">💸 ประวัติการทำรายการ</option>
+                <option value="backup">💾 ข้อมูลสำรอง</option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="data-search"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >🔍 ค้นหา</label
+              >
+              <input
+                type="text"
+                id="data-search"
+                placeholder="ค้นหาข้อมูล..."
+                class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white"
+              />
+            </div>
+            <div class="flex items-end">
+              <button
+                id="refresh-data-list"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+              >
+                🔄 รีเฟรชข้อมูล
+              </button>
+            </div>
+          </div>
+          <div id="data-management-list" class="space-y-4"></div>
+          <div
+            id="data-management-empty"
+            class="text-center py-12 text-slate-400 hidden"
+          >
+            <div class="text-6xl mb-4">💾</div>
+            <p class="text-xl">ไม่พบข้อมูล</p>
+            <p class="text-slate-500 mt-2">ลองเปลี่ยนตัวกรองหรือค้นหาใหม่</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="edit-data-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div
+        class="bg-gray-800 rounded-xl shadow-2xl p-6 w-[92vw] sm:w-[86vw] md:w-[78vw] max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto"
+      >
+        <h3 class="text-xl font-semibold text-white mb-4">✏️ แก้ไขข้อมูล</h3>
+        <div id="edit-data-form"></div>
+        <div class="flex gap-4 mt-6">
+          <button
+            id="save-data-button"
+            class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+          >
+            <span>💾 บันทึก</span>
+            <div
+              id="save-data-loading"
+              class="loading-spinner ml-2 hidden"
+            ></div>
+          </button>
+          <button
+            id="cancel-edit-data"
+            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+          >
+            ยกเลิก
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      id="backup-restore-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div
+        class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-4xl mx-4 max-h-[90vh] overflow-hidden neon-glow"
+      >
+        <div
+          class="flex items-center justify-between p-6 border-b border-slate-600"
+        >
+          <div>
+            <h3 class="text-2xl font-bold gradient-text">
+              💾 สำรองและกู้คืนข้อมูล
+            </h3>
+            <p class="text-slate-300 mt-1">จัดการการสำรองข้อมูลและกู้คืนระบบ</p>
+          </div>
+          <button
+            onclick="closeBackupRestoreModal()"
+            class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+          >
+            ✕ ปิด
+          </button>
+        </div>
+        <div
+          class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]"
+        >
+          <div class="backup-section mb-6">
+            <h4 class="text-xl font-semibold text-white mb-4">
+              📤 สำรองข้อมูล
+            </h4>
+            <p class="text-slate-300 mb-4">สร้างไฟล์สำรองข้อมูลทั้งหมดในระบบ</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button
+                id="create-full-backup"
+                class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                💾 สำรองข้อมูลทั้งหมด
+              </button>
+              <button
+                id="create-students-backup"
+                class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                👥 สำรองข้อมูลนักศึกษา
+              </button>
+            </div>
+          </div>
+          <div class="backup-section backup-warning mb-6">
+            <h4 class="text-xl font-semibold text-white mb-4">
+              📥 กู้คืนข้อมูล
+            </h4>
+            <p class="text-slate-300 mb-4">
+              นำเข้าข้อมูลจากไฟล์สำรอง (จะเขียนทับข้อมูลเดิม)
+            </p>
+            <div class="mb-4">
+              <input
+                type="file"
+                id="restore-file-input"
+                accept=".json"
+                class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent text-white"
+              />
+            </div>
+            <button
+              id="restore-data-button"
+              class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              📥 กู้คืนข้อมูล
+              <div
+                id="restore-loading"
+                class="loading-spinner ml-2 hidden"
+              ></div>
+            </button>
+          </div>
+          <div class="backup-section">
+            <h4 class="text-xl font-semibold text-white mb-4">
+              📋 ประวัติการสำรอง
+            </h4>
+            <div id="backup-history-list" class="space-y-3"></div>
+            <div
+              id="backup-history-empty"
+              class="text-center py-8 text-slate-400"
+            >
+              <div class="text-4xl mb-2">📋</div>
+              <p>ยังไม่มีประวัติการสำรอง</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="quick-score-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom"
+    >
+      <div
+        class="dark-glass rounded-2xl shadow-2xl responsive-padding modal-responsive neon-glow"
+      >
+        <div class="text-center responsive-margin">
+          <h3
+            id="quick-modal-title"
+            class="responsive-subtitle font-bold text-white mb-2"
+          >
+            จัดการคะแนนและเงิน
+          </h3>
+          <p
+            id="quick-modal-subtitle"
+            class="responsive-text text-slate-300 break-words"
+          >
+            -
+          </p>
+          <div class="mt-2 flex justify-center">
+            <div id="quick-data-status" class="data-saved">💾 บันทึกถาวร</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 responsive-margin">
+          <div class="glass-effect rounded-xl responsive-padding text-center">
+            <div
+              id="quick-current-score"
+              class="text-2xl sm:text-3xl font-bold text-blue-400 mb-1"
+            >
+              0
+            </div>
+            <p class="text-slate-400 text-xs sm:text-sm">คะแนนปัจจุบัน</p>
+          </div>
+          <div class="glass-effect rounded-xl responsive-padding text-center">
+            <div
+              id="quick-current-money"
+              class="text-2xl sm:text-3xl font-bold text-red-400 mb-1"
+            >
+              0
+            </div>
+            <p class="text-slate-400 text-xs sm:text-sm">เงินที่ถูกหัก</p>
+          </div>
+        </div>
+        <div class="responsive-margin">
+          <h4 class="responsive-subtitle font-semibold text-white mb-3">
+            👨‍🏫 ข้อมูลอาจารย์ (จำเป็น)
+          </h4>
+          <div class="mb-4">
+            <input
+              type="text"
+              id="teacher-name-input"
+              class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+              placeholder="กรอกชื่ออาจารย์ผู้ทำรายการ (จำเป็น)"
+              required
+            />
+            <div
+              class="text-xs text-slate-400 mt-1 bg-slate-800/50 rounded p-2"
+            >
+              ⚠️ ต้องกรอกชื่ออาจารย์ก่อนทำการให้คะแนนหรือหักเงิน
+            </div>
+          </div>
+        </div>
+        <div class="responsive-margin">
+          <h4 class="responsive-subtitle font-semibold text-white mb-3">
+            📊 จัดการคะแนน
+          </h4>
+          <div class="grid grid-cols-4 gap-2 mb-3">
+            <button
+              onclick="quickAdjustScore(1)"
+              class="bg-green-600/80 hover:bg-green-600 text-white font-semibold btn-responsive rounded-lg transition-all touch-friendly"
+            >
+              +1
+            </button>
+            <button
+              onclick="quickAdjustScore(5)"
+              class="bg-green-600/80 hover:bg-green-600 text-white font-semibold btn-responsive rounded-lg transition-all touch-friendly"
+            >
+              +5
+            </button>
+            <button
+              onclick="quickAdjustScore(-1)"
+              class="bg-red-600/80 hover:bg-red-600 text-white font-semibold btn-responsive rounded-lg transition-all touch-friendly"
+            >
+              -1
+            </button>
+            <button
+              onclick="quickAdjustScore(-5)"
+              class="bg-red-600/80 hover:bg-red-600 text-white font-semibold btn-responsive rounded-lg transition-all touch-friendly"
+            >
+              -5
+            </button>
+          </div>
+          <div class="flex gap-2 mb-3">
+            <input
+              type="number"
+              id="quick-custom-score"
+              class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+              placeholder="จำนวนคะแนน"
+            />
+            <button
+              onclick="quickAdjustScoreCustom()"
+              class="bg-blue-600/80 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"
+            >
+              เพิ่ม
+            </button>
+          </div>
+          <div class="flex gap-2">
+            <input
+              type="number"
+              id="quick-exact-score"
+              class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+              placeholder="ตั้งคะแนนเป็น"
+            />
+            <button
+              onclick="quickSetExactScore()"
+              class="bg-purple-600/80 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"
+            >
+              ตั้ง
+            </button>
+          </div>
+        </div>
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-white mb-3">
+            💸 จัดการเงินที่ถูกหัก
+          </h4>
+          <div class="mb-4">
+            <label
+              for="money-reason-input"
+              class="block text-sm font-medium text-slate-300 mb-2"
+              >📝 เหตุผลการหักเงิน (จำเป็น)</label
+            >
+            <input
+              type="text"
+              id="money-reason-input"
+              class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+              placeholder="กรอกเหตุผลการหักเงิน เช่น มาสาย, ไม่ส่งงาน, ทำผิดกฎ"
+              required
+            />
+            <div
+              class="text-xs text-slate-400 mt-1 bg-slate-800/50 rounded p-2"
+            >
+              ⚠️ ต้องกรอกเหตุผลก่อนทำการหักเงินหรือลดเงิน (จะถูกบันทึกในประวัติ)
+            </div>
+          </div>
+          <div id="teacher-money-section" class="mb-4 hidden">
+            <div
+              class="text-xs text-green-400 text-center mb-4 bg-green-900/20 border border-green-500/30 rounded-lg p-3"
+            >
+              ✅ ระบบใหม่: หักเงินได้ทันที ไม่ต้องรออนุมัติ + บันทึกถาวร +
+              บันทึกเหตุผล
+            </div>
+            <div class="grid grid-cols-4 gap-2 mb-3">
+              <button
+                onclick="quickAdjustMoneyTeacher(100)"
+                class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                +100
+              </button>
+              <button
+                onclick="quickAdjustMoneyTeacher(50)"
+                class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                +50
+              </button>
+              <button
+                onclick="quickAdjustMoneyTeacher(20)"
+                class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                +20
+              </button>
+              <button
+                onclick="quickAdjustMoneyTeacher(10)"
+                class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                +10
+              </button>
+            </div>
+            <div class="grid grid-cols-4 gap-2 mb-3">
+              <button
+                onclick="reduceMoneyDirectly(editingStudent.__backendId, 100)"
+                class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                -100
+              </button>
+              <button
+                onclick="reduceMoneyDirectly(editingStudent.__backendId, 50)"
+                class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                -50
+              </button>
+              <button
+                onclick="reduceMoneyDirectly(editingStudent.__backendId, 20)"
+                class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                -20
+              </button>
+              <button
+                onclick="reduceMoneyDirectly(editingStudent.__backendId, 10)"
+                class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                -10
+              </button>
+            </div>
+            <div class="flex gap-2 mb-3">
+              <input
+                type="number"
+                id="quick-custom-money-teacher"
+                class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+                placeholder="จำนวนเงิน"
+              />
+              <button
+                onclick="quickAdjustMoneyCustomTeacher()"
+                class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"
+              >
+                หักเงิน
+              </button>
+            </div>
+            <div class="flex gap-2 mb-3">
+              <button
+                onclick="resetMoneyToZero()"
+                class="w-full bg-yellow-600/80 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"
+              >
+                🔄 รีเซ็ตเงินเป็น 0
+              </button>
+            </div>
+            <div
+              class="text-xs text-slate-400 text-center mb-4 bg-slate-800/50 rounded-lg p-3"
+            >
+              💡 ระบบใหม่: หักเงิน/ลดเงิน/รีเซ็ตได้ทันที + บันทึกถาวรทุกรายการ +
+              บันทึกเหตุผล
+            </div>
+          </div>
+          <div id="admin-money-section" class="hidden">
+            <div
+              class="text-xs text-yellow-400 text-center mb-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3"
+            >
+              👑 Admin Mode: สิทธิ์เต็ม + บันทึกถาวร + บันทึกเหตุผล
+            </div>
+            <div class="grid grid-cols-4 gap-2 mb-3">
+              <button
+                onclick="quickAdjustMoney(100)"
+                class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                +100
+              </button>
+              <button
+                onclick="quickAdjustMoney(50)"
+                class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                +50
+              </button>
+              <button
+                onclick="quickAdjustMoney(-50)"
+                class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                -50
+              </button>
+              <button
+                onclick="quickAdjustMoney(-100)"
+                class="bg-green-600/80 hover:bg-green-600 text-white font-semibold py-2 px-2 rounded-lg transition-all text-xs"
+              >
+                -100
+              </button>
+            </div>
+            <div class="flex gap-2 mb-3">
+              <input
+                type="number"
+                id="quick-custom-money"
+                class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+                placeholder="จำนวนเงินที่หัก"
+              />
+              <button
+                onclick="quickAdjustMoneyCustom()"
+                class="bg-red-600/80 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"
+              >
+                หักเงิน
+              </button>
+            </div>
+            <div class="flex gap-2">
+              <input
+                type="number"
+                id="quick-exact-money"
+                class="flex-1 px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+                placeholder="ตั้งเงินที่ถูกหักเป็น"
+              />
+              <button
+                onclick="quickSetExactMoney()"
+                class="bg-yellow-600/80 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm"
+              >
+                ตั้ง
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="mb-6">
+          <button
+            onclick="viewStudentTransactionHistory()"
+            class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            📋 ดูประวัติการทำรายการ
+          </button>
+        </div>
+        <div class="text-center">
+          <button
+            onclick="closeQuickScoreModal()"
+            class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-3 px-8 rounded-lg transition-all"
+          >
+            ปิด
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="transaction-history-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom"
+    >
+      <div
+        class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-4xl mx-4 max-h-[90vh] overflow-hidden neon-glow"
+      >
+        <div
+          class="flex items-center justify-between p-6 border-b border-slate-600"
+        >
+          <div>
+            <h3 class="text-2xl font-bold gradient-text">
+              📋 ประวัติการทำรายการ
+            </h3>
+            <p id="transaction-history-subtitle" class="text-slate-300 mt-1">
+              ประวัติการเปลี่ยนแปลงคะแนนและเงิน
+            </p>
+          </div>
+          <button
+            onclick="closeTransactionHistoryModal()"
+            class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+          >
+            ✕ ปิด
+          </button>
+        </div>
+        <div
+          class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]"
+        >
+          <div id="transaction-history-list" class="space-y-4"></div>
+          <div
+            id="transaction-history-empty"
+            class="text-center py-12 text-slate-400 hidden"
+          >
+            <div class="text-6xl mb-4">📋</div>
+            <p class="text-xl">ยังไม่มีประวัติการทำรายการ</p>
+            <p class="text-slate-500 mt-2">
+              ประวัติจะแสดงหลังจากมีการเปลี่ยนแปลงข้อมูล
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="admin-transaction-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom"
+    >
+      <div
+        class="dark-glass rounded-2xl shadow-2xl w-[92vw] md:w-[88vw] lg:w-[82vw] max-w-5xl mx-4 max-h-[90vh] overflow-hidden neon-glow"
+      >
+        <div
+          class="flex items-center justify-between p-6 border-b border-slate-600"
+        >
+          <div>
+            <h3 class="text-2xl font-bold gradient-text">
+              👑 จัดการประวัติการทำรายการ (Admin)
+            </h3>
+            <p class="text-slate-300 mt-1">
+              Admin สามารถแก้ไข ลบ และจัดการประวัติทั้งหมด
+            </p>
+          </div>
+          <button
+            onclick="closeAdminTransactionModal()"
+            class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+          >
+            ✕ ปิด
+          </button>
+        </div>
+        <div
+          class="p-6 overflow-y-auto max-h-[75vh] md:max-h-[calc(90vh-120px)]"
+        >
+          <div class="mb-6 grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <div>
+              <label
+                for="admin-transaction-type-filter"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >📊 ประเภทรายการ</label
+              >
+              <select
+                id="admin-transaction-type-filter"
+                class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white"
+              >
+                <option value="">ทั้งหมด</option>
+                <option value="deduct">💸 หักเงิน</option>
+                <option value="reduce">💚 ลดเงิน</option>
+                <option value="reset">🔄 รีเซ็ต</option>
+                <option value="score_change">📊 เปลี่ยนคะแนน</option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="admin-transaction-teacher-filter"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >👨‍🏫 อาจารย์</label
+              >
+              <select
+                id="admin-transaction-teacher-filter"
+                class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white"
+              >
+                <option value="">ทั้งหมด</option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="admin-transaction-search"
+                class="block text-sm font-medium text-slate-300 mb-2"
+                >🔍 ค้นหา</label
+              >
+              <input
+                type="text"
+                id="admin-transaction-search"
+                placeholder="ค้นหานักศึกษา..."
+                class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white"
+              />
+            </div>
+            <div class="flex items-end">
+              <button
+                id="refresh-admin-transactions"
+                class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+              >
+                🔄 รีเฟรช
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
+              <div class="text-center">
+                <div
+                  class="text-2xl font-bold text-purple-400"
+                  id="admin-total-transactions"
+                >
+                  0
+                </div>
+                <div class="text-sm text-slate-400">รายการทั้งหมด</div>
+              </div>
+            </div>
+            <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
+              <div class="text-center">
+                <div
+                  class="text-2xl font-bold text-red-400"
+                  id="admin-total-deductions"
+                >
+                  0
+                </div>
+                <div class="text-sm text-slate-400">การหักเงิน</div>
+              </div>
+            </div>
+            <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
+              <div class="text-center">
+                <div
+                  class="text-2xl font-bold text-green-400"
+                  id="admin-total-reductions"
+                >
+                  0
+                </div>
+                <div class="text-sm text-slate-400">การลดเงิน</div>
+              </div>
+            </div>
+            <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
+              <div class="text-center">
+                <div
+                  class="text-2xl font-bold text-blue-400"
+                  id="admin-total-score-changes"
+                >
+                  0
+                </div>
+                <div class="text-sm text-slate-400">เปลี่ยนคะแนน</div>
+              </div>
+            </div>
+          </div>
+          <div id="admin-transaction-list" class="space-y-4"></div>
+          <div
+            id="admin-transaction-empty"
+            class="text-center py-12 text-slate-400 hidden"
+          >
+            <div class="text-6xl mb-4">📋</div>
+            <p class="text-xl">ไม่พบประวัติการทำรายการ</p>
+            <p class="text-slate-500 mt-2">ลองเปลี่ยนตัวกรองหรือค้นหาใหม่</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="edit-student-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 safe-area-top safe-area-bottom"
+    >
+      <div
+        class="dark-glass rounded-xl shadow-2xl p-6 w-[92vw] sm:w-[86vw] md:w-[78vw] max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-xl font-semibold text-white">
+              แก้ไขข้อมูลนักศึกษา
+            </h3>
+            <p id="edit-student-subtitle" class="text-sm text-slate-300 mt-1">
+              -
+            </p>
+          </div>
+          <button
+            type="button"
+            onclick="closeEditStudentModal()"
+            class="bg-gray-600/80 hover:bg-gray-600 text-white font-semibold py-1 px-3 rounded-lg text-sm"
+          >
+            ✕ ปิด
+          </button>
+        </div>
+        <form id="edit-student-form" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label
+                for="edit-student-first-name"
+                class="block text-sm font-medium text-slate-300 mb-1"
+                >ชื่อ</label
+              >
+              <input
+                type="text"
+                id="edit-student-first-name"
+                class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+              />
+            </div>
+            <div>
+              <label
+                for="edit-student-last-name"
+                class="block text-sm font-medium text-slate-300 mb-1"
+                >นามสกุล</label
+              >
+              <input
+                type="text"
+                id="edit-student-last-name"
+                class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label
+                for="edit-student-username"
+                class="block text-sm font-medium text-slate-300 mb-1"
+                >Username</label
+              >
+              <input
+                type="text"
+                id="edit-student-username"
+                class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+              />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  for="edit-student-score"
+                  class="block text-sm font-medium text-slate-300 mb-1"
+                  >คะแนน</label
+                >
+                <input
+                  type="number"
+                  id="edit-student-score"
+                  class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  for="edit-student-money"
+                  class="block text-sm font-medium text-slate-300 mb-1"
+                  >ยอดเงินหัก</label
+                >
+                <input
+                  type="number"
+                  id="edit-student-money"
+                  class="w-full px-3 py-2 glass-effect rounded-lg focus:ring-2 focus:ring-red-400 focus:border-transparent text-white placeholder-slate-400 border-0 text-sm"
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-slate-300 mb-2">บ้าน</p>
+            <div class="grid grid-cols-3 gap-3">
+              <div class="edit-house-option">
+                <label class="block cursor-pointer">
+                  <input
+                    type="radio"
+                    name="edit-house"
+                    value="hades"
+                    class="hidden"
+                  />
+                  <div
+                    class="glass-effect rounded-lg px-3 py-2 text-center border-2 border-transparent text-sm text-slate-200"
+                  >
+                    <div class="text-xl mb-1">🐉</div>
+                    <div>Hades</div>
+                  </div>
+                </label>
+              </div>
+              <div class="edit-house-option">
+                <label class="block cursor-pointer">
+                  <input
+                    type="radio"
+                    name="edit-house"
+                    value="ceres"
+                    class="hidden"
+                  />
+                  <div
+                    class="glass-effect rounded-lg px-3 py-2 text-center border-2 border-transparent text-sm text-slate-200"
+                  >
+                    <div class="text-xl mb-1">🌿</div>
+                    <div>Ceres</div>
+                  </div>
+                </label>
+              </div>
+              <div class="edit-house-option">
+                <label class="block cursor-pointer">
+                  <input
+                    type="radio"
+                    name="edit-house"
+                    value="other"
+                    class="hidden"
+                  />
+                  <div
+                    class="glass-effect rounded-lg px-3 py-2 text-center border-2 border-transparent text-sm text-slate-200"
+                  >
+                    <div class="text-xl mb-1">🏠</div>
+                    <div>อื่น ๆ</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-slate-300 mb-2">บทบาท</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="edit-role-option">
+                <label class="block cursor-pointer">
+                  <input
+                    type="radio"
+                    name="edit-role"
+                    value="normal"
+                    class="hidden"
+                  />
+                  <div
+                    class="glass-effect rounded-lg px-3 py-2 border-2 border-transparent text-sm text-slate-200 text-center"
+                  >
+                    นักศึกษา
+                  </div>
+                </label>
+              </div>
+              <div class="edit-role-option">
+                <label class="block cursor-pointer">
+                  <input
+                    type="radio"
+                    name="edit-role"
+                    value="medical"
+                    class="hidden"
+                  />
+                  <div
+                    class="glass-effect rounded-lg px-3 py-2 border-2 border-transparent text-sm text-slate-200 text-center"
+                  >
+                    เวรพยาบาล
+                  </div>
+                </label>
+              </div>
+              <div class="edit-role-option">
+                <label class="block cursor-pointer">
+                  <input
+                    type="radio"
+                    name="edit-role"
+                    value="council"
+                    class="hidden"
+                  />
+                  <div
+                    class="glass-effect rounded-lg px-3 py-2 border-2 border-transparent text-sm text-slate-200 text-center"
+                  >
+                    สภานักศึกษา
+                  </div>
+                </label>
+              </div>
+              <div class="edit-role-option">
+                <label class="block cursor-pointer">
+                  <input
+                    type="radio"
+                    name="edit-role"
+                    value="senior"
+                    class="hidden"
+                  />
+                  <div
+                    class="glass-effect rounded-lg px-3 py-2 border-2 border-transparent text-sm text-slate-200 text-center"
+                  >
+                    พี่สตาฟ
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div
+            class="glass-effect rounded-lg p-3 text-xs text-slate-300 space-y-1"
+          >
+            <div class="flex justify-between">
+              <span class="text-slate-400">ประเภทผู้เล่น:</span>
+              <span id="edit-student-player-type" class="font-medium text-white"
+                >-</span
+              >
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">ID ภายในระบบ:</span>
+              <span
+                id="edit-student-id"
+                class="font-mono text-slate-200 text-[11px]"
+                >-</span
+              >
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">สร้างเมื่อ:</span>
+              <span id="edit-student-created" class="text-slate-200">-</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">แก้ไขล่าสุด:</span>
+              <span id="edit-student-updated" class="text-slate-200">-</span>
+            </div>
+          </div>
+          <div class="flex gap-4 mt-2">
+            <button
+              id="save-student-button"
+              type="submit"
+              class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center text-sm"
+            >
+              <span>บันทึกการเปลี่ยนแปลง</span>
+              <div
+                id="save-student-loading"
+                class="loading-spinner ml-2 hidden"
+              ></div>
+            </button>
+            <button
+              type="button"
+              onclick="closeEditStudentModal()"
+              class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 text-sm"
+            >
+              ยกเลิก
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      id="edit-transaction-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div
+        class="dark-glass rounded-xl shadow-2xl p-6 w-[92vw] sm:w-[86vw] md:w-[78vw] max-w-2xl mx-4 border border-gray-600 max-h-[90vh] overflow-y-auto"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-semibold text-white">
+            ✏️ แก้ไขประวัติการทำรายการ
+          </h3>
+          <div
+            class="text-xs text-yellow-400 bg-yellow-900/20 border border-yellow-500/30 rounded px-2 py-1"
+          >
+            👑 Admin Only
+          </div>
+        </div>
+        <div id="edit-transaction-form"></div>
+        <div class="flex gap-4 mt-6">
+          <button
+            id="save-transaction-button"
+            class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+          >
+            <span>💾 บันทึกการแก้ไข</span>
+            <div
+              id="save-transaction-loading"
+              class="loading-spinner ml-2 hidden"
+            ></div>
+          </button>
+          <button
+            id="cancel-edit-transaction"
+            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+          >
+            ยกเลิก
+          </button>
+        </div>
+        <div class="mt-4 text-xs text-slate-400 bg-slate-800/50 rounded-lg p-3">
+          <div class="flex items-start">
+            <svg
+              class="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewbox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"
+              ></path>
+            </svg>
+            <div>
+              <p class="font-medium text-slate-300 mb-1">⚠️ คำเตือน:</p>
+              <ul class="space-y-1">
+                <li>• การแก้ไขประวัติจะส่งผลต่อความถูกต้องของข้อมูล</li>
+                <li>• ควรแก้ไขเฉพาะกรณีจำเป็นเท่านั้น</li>
+                <li>• การเปลี่ยนแปลงจะถูกบันทึกถาวร</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="assets/js/app.js"></script>
+  </body>
 </html>
