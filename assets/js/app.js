@@ -429,24 +429,28 @@ const dataHandler = {
 async function initializeDataSDK() {
     try {
         updateDataStatus('syncing');
-        showPageLoader('กำลังโหลดข้อมูล...');
+        showPageLoader('กำลังซิงค์ข้อมูล');
+        disableLoginButtons();
         if (window.dataSdk) {
             const result = await window.dataSdk.init(dataHandler);
             if (result.isOk) {
                 console.log('Data SDK initialized successfully');
                 updateDataStatus('synced');
                 startAutoSync();
+                enableLoginButtons();
                 hidePageLoader();
             } else {
                 console.error('Failed to initialize Data SDK:', result.error);
                 updateDataStatus('error');
-                hidePageLoader();
+                showPageLoader('⚠️ เกิดข้อผิดพลาดในการโหลดข้อมูล');
+                setTimeout(() => hidePageLoader(), 3000);
             }
         }
     } catch (error) {
         console.error('Error initializing Data SDK:', error);
         updateDataStatus('error');
-        hidePageLoader();
+        showPageLoader('⚠️ เกิดข้อผิดพลาดในการโหลดข้อมูล');
+        setTimeout(() => hidePageLoader(), 3000);
     }
 }
 
@@ -640,7 +644,59 @@ function hidePageLoader() {
     const loader = document.getElementById('page-loader');
     if (!loader) return;
     loader.classList.add('fade-out');
-    setTimeout(() => loader.classList.add('hidden'), 250);
+    setTimeout(() => loader.classList.add('hidden'), 300);
+}
+
+function disableLoginButtons() {
+    const studentButton = document.getElementById('student-login-button');
+    const adminButton = document.getElementById('admin-login-button');
+    const studentInput = document.getElementById('student-login-name');
+    const adminInput = document.getElementById('admin-password');
+    
+    if (studentButton) {
+        studentButton.disabled = true;
+        studentButton.style.opacity = '0.5';
+        studentButton.style.cursor = 'not-allowed';
+    }
+    if (adminButton) {
+        adminButton.disabled = true;
+        adminButton.style.opacity = '0.5';
+        adminButton.style.cursor = 'not-allowed';
+    }
+    if (studentInput) {
+        studentInput.disabled = true;
+        studentInput.style.opacity = '0.7';
+    }
+    if (adminInput) {
+        adminInput.disabled = true;
+        adminInput.style.opacity = '0.7';
+    }
+}
+
+function enableLoginButtons() {
+    const studentButton = document.getElementById('student-login-button');
+    const adminButton = document.getElementById('admin-login-button');
+    const studentInput = document.getElementById('student-login-name');
+    const adminInput = document.getElementById('admin-password');
+    
+    if (studentButton) {
+        studentButton.disabled = false;
+        studentButton.style.opacity = '1';
+        studentButton.style.cursor = 'pointer';
+    }
+    if (adminButton) {
+        adminButton.disabled = false;
+        adminButton.style.opacity = '1';
+        adminButton.style.cursor = 'pointer';
+    }
+    if (studentInput) {
+        studentInput.disabled = false;
+        studentInput.style.opacity = '1';
+    }
+    if (adminInput) {
+        adminInput.disabled = false;
+        adminInput.style.opacity = '1';
+    }
 }
 
 function showError(errorId, message) {
@@ -1265,7 +1321,7 @@ function updateStudentView() {
     });
     const houseIcon = document.getElementById('student-house-icon');
     if (houseIcon) {
-        const icon = currentStudent.house === 'hades' ? '🐉' : currentStudent.house === 'ceres' ? '🌿' : '🏠';
+        const icon = currentStudent.house === 'hades' ? '⚫' : currentStudent.house === 'ceres' ? '⚪' : '🏠';
         houseIcon.innerHTML = securityUtils.html`<span class="text-2xl sm:text-3xl">${icon}</span>`;
     }
     const sortedStudents = [...students].sort((a, b) => (b.score || 0) - (a.score || 0));
