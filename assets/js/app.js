@@ -617,7 +617,8 @@ const minecraftPlayers = [
     { "uuid": "a8ad17ff-8d09-4ff9-8190-ccca38ecf090", "name": "_LoKiT_" },
     { "uuid": "ad18ef19-a855-425f-8474-6fcecc6027a9", "name": "Jeweloobaby" },
     { "uuid": "1af933fd-47b2-43f5-9866-e878b2f3b1c5", "name": "Yochi_san" },
-    { "uuid": "a65e5d26-f155-4a5c-aa54-4fa570521929", "name": "martiNMaeL" }
+    { "uuid": "a65e5d26-f155-4a5c-aa54-4fa570521929", "name": "martiNMaeL" },
+    { "uuid": "7c629ccd-bb94-480a-a425-117f81c1bf33", "name": "Rea1z_" }
 ];
 
 function showLoading(buttonId, loadingId) {
@@ -2844,5 +2845,6 @@ function logout() {
         openSuperAdminModal();
     }
 })();
+
 
 
