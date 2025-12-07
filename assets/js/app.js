@@ -612,7 +612,12 @@ const minecraftPlayers = [
     { "uuid": "2b5c5927-70c4-49e6-9aff-06b11803373a", "name": "Asteria_x086" },
     { "uuid": "eb73d41d-b7d6-435c-bba1-25610612df68", "name": "_MAJ0R" },
     { "uuid": "e985139e-d103-409c-b6b9-beb5f9ae396f", "name": "BeamDeity" },
-    { "uuid": "f6b67342-2aad-4aba-8c4f-82a2f3f0bf0c", "name": "KuroIbara260267" }
+    { "uuid": "f6b67342-2aad-4aba-8c4f-82a2f3f0bf0c", "name": "KuroIbara260267" },
+    { "uuid": "b1e73e37-e9b4-4763-8f6e-9084db705efc", "name": "xXGitXx" },  
+    { "uuid": "a8ad17ff-8d09-4ff9-8190-ccca38ecf090", "name": "_LoKiT_" },
+    { "uuid": "ad18ef19-a855-425f-8474-6fcecc6027a9", "name": "Jeweloobaby" },
+    { "uuid": "1af933fd-47b2-43f5-9866-e878b2f3b1c5", "name": "Yochi_san" },
+    { "uuid": "a65e5d26-f155-4a5c-aa54-4fa570521929", "name": "martiNMaeL" }
 ];
 
 function showLoading(buttonId, loadingId) {
