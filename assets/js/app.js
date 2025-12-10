@@ -617,8 +617,7 @@ const minecraftPlayers = [
     { "uuid": "a8ad17ff-8d09-4ff9-8190-ccca38ecf090", "name": "_LoKiT_" },
     { "uuid": "ad18ef19-a855-425f-8474-6fcecc6027a9", "name": "Jeweloobaby" },
     { "uuid": "1af933fd-47b2-43f5-9866-e878b2f3b1c5", "name": "Yochi_san" },
-    { "uuid": "a65e5d26-f155-4a5c-aa54-4fa570521929", "name": "martiNMaeL" },
-    { "uuid": "7c629ccd-bb94-480a-a425-117f81c1bf33", "name": "Rea1z_" }
+    { "uuid": "a65e5d26-f155-4a5c-aa54-4fa570521929", "name": "martiNMaeL" }
 ];
 
 function showLoading(buttonId, loadingId) {
@@ -1142,7 +1141,453 @@ function updateUI() {
     updateScoreCards();
     updateStudentView();
     updateTransactionCounts();
+    updateScoreLeaderboard();
 }
+
+// Leaderboard state for each section
+let highestHouseFilter = 'all';
+let lowestHouseFilter = 'all';
+let deductedHouseFilter = 'all';
+let highestUIStyle = 'podium'; // 'podium', 'cards', 'table'
+let highestRoleFilter = 'all'; // 'all', 'student', 'senior'
+
+function setHighestRoleFilter(role) {
+    highestRoleFilter = role;
+    updateHighestRoleButtons();
+    renderHighestLeaderboard();
+}
+
+function updateHighestRoleButtons() {
+    ['all', 'student', 'senior'].forEach(r => {
+        const btn = document.getElementById(`highest-role-${r}`);
+        if (btn) {
+            if (r === highestRoleFilter) {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+function setHighestUIStyle(style) {
+    highestUIStyle = style;
+    updateHighestStyleButtons();
+    renderHighestLeaderboard();
+}
+
+function updateHighestStyleButtons() {
+    ['podium', 'cards', 'table'].forEach(s => {
+        const btn = document.getElementById(`highest-style-${s}`);
+        if (btn) {
+            if (s === highestUIStyle) {
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+async function downloadHighestLeaderboardAsJPEG() {
+    const section = document.getElementById('highest-leaderboard-section');
+    if (!section) return;
+    
+    // Specific elements to hide during capture
+    const styleControls = document.getElementById('highest-style-controls');
+    const houseControls = document.getElementById('highest-house-controls');
+    const roleControls = document.getElementById('highest-role-controls');
+    const downloadBtn = section.querySelector('button[onclick*="downloadHighest"]');
+    
+    try {
+        // Hide UI controls for clean screenshot
+        if (styleControls) styleControls.style.display = 'none';
+        if (houseControls) houseControls.style.display = 'none';
+        if (roleControls) roleControls.style.display = 'none';
+        if (downloadBtn) downloadBtn.style.display = 'none';
+        
+        // Dynamic import html2canvas
+        if (typeof html2canvas === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            document.head.appendChild(script);
+            await new Promise(resolve => script.onload = resolve);
+        }
+        
+        // Create canvas
+        const canvas = await html2canvas(section, {
+            backgroundColor: '#1e293b',
+            scale: 2,
+            useCORS: true,
+            logging: false
+        });
+        
+        // Generate filename: category_style_house_role_date
+        const dateStr = new Date().toISOString().split('T')[0];
+        const houseStr = highestHouseFilter === 'all' ? 'ทั้งหมด' : highestHouseFilter === 'hades' ? 'เฮเดส' : 'เซเรส';
+        const styleStr = highestUIStyle === 'podium' ? 'Podium' : highestUIStyle === 'cards' ? 'Cards' : 'Table';
+        const roleStr = highestRoleFilter === 'all' ? 'ทั้งหมด' : highestRoleFilter === 'student' ? 'รุ่นน้อง' : 'รุ่นพี่';
+        const filename = `อันดับคะแนนสูงสุด_${styleStr}_${houseStr}_${roleStr}_${dateStr}.jpg`;
+        
+        // Download
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.click();
+    } catch (error) {
+        console.error('Error downloading JPEG:', error);
+        alert('ไม่สามารถดาวน์โหลดได้ กรุณาลองใหม่อีกครั้ง');
+    } finally {
+        // Restore hidden elements
+        if (styleControls) styleControls.style.display = '';
+        if (houseControls) houseControls.style.display = '';
+        if (roleControls) roleControls.style.display = '';
+        if (downloadBtn) downloadBtn.style.display = '';
+    }
+}
+
+function setHighestHouseFilter(house) {
+    highestHouseFilter = house;
+    updateHighestFilterButtons();
+    renderHighestLeaderboard();
+}
+
+function setLowestHouseFilter(house) {
+    lowestHouseFilter = house;
+    updateLowestFilterButtons();
+    renderLowestLeaderboard();
+}
+
+function setDeductedHouseFilter(house) {
+    deductedHouseFilter = house;
+    updateDeductedFilterButtons();
+    renderDeductedLeaderboard();
+}
+
+function updateHighestFilterButtons() {
+    ['all', 'hades', 'ceres'].forEach(h => {
+        const btn = document.getElementById(`highest-filter-${h}`);
+        if (btn) {
+            if (h === highestHouseFilter) {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+function updateLowestFilterButtons() {
+    ['all', 'hades', 'ceres'].forEach(h => {
+        const btn = document.getElementById(`lowest-filter-${h}`);
+        if (btn) {
+            if (h === lowestHouseFilter) {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/30 text-red-300 border border-red-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+function updateDeductedFilterButtons() {
+    ['all', 'hades', 'ceres'].forEach(h => {
+        const btn = document.getElementById(`deducted-filter-${h}`);
+        if (btn) {
+            if (h === deductedHouseFilter) {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-orange-500/30 text-orange-300 border border-orange-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+// Render all 3 leaderboards
+function updateScoreLeaderboard() {
+    renderHighestLeaderboard();
+    renderLowestLeaderboard();
+    renderDeductedLeaderboard();
+}
+
+// ===== SECTION 1: Highest Score (3 UI Styles) =====
+function renderHighestLeaderboard() {
+    const podium = document.getElementById('highest-podium');
+    const container = document.getElementById('highest-leaderboard-container');
+    const emptyState = document.getElementById('highest-leaderboard-empty');
+    
+    if (!container) return;
+    
+    let filtered = [...students];
+    
+    // Filter by house
+    if (highestHouseFilter !== 'all') {
+        filtered = filtered.filter(s => s.house === highestHouseFilter);
+    }
+    
+    // Filter by role (senior vs normal/student)
+    if (highestRoleFilter !== 'all') {
+        // Map button value to actual role value: 'student' button -> 'normal' role
+        const roleToFilter = highestRoleFilter === 'student' ? 'normal' : highestRoleFilter;
+        filtered = filtered.filter(s => s.role === roleToFilter);
+    }
+    
+    if (filtered.length === 0) {
+        if (podium) podium.innerHTML = '';
+        container.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+    
+    if (emptyState) emptyState.classList.add('hidden');
+    
+    const sorted = filtered.sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 10);
+    
+    // Render based on selected style
+    switch (highestUIStyle) {
+        case 'podium':
+            renderHighestPodiumStyle(podium, container, sorted);
+            break;
+        case 'cards':
+            renderHighestCardsStyle(podium, container, sorted);
+            break;
+        case 'table':
+            renderHighestTableStyle(podium, container, sorted);
+            break;
+        default:
+            renderHighestPodiumStyle(podium, container, sorted);
+    }
+}
+
+// Style 1: Podium
+function renderHighestPodiumStyle(podium, container, sorted) {
+    const top3 = sorted.slice(0, 3);
+    const rest = sorted.slice(3);
+    
+    if (podium) {
+        podium.className = 'flex justify-center items-end gap-4 mb-6';
+        const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
+        podium.innerHTML = podiumOrder.map((student, idx) => {
+            if (!student) return '';
+            const actualRank = idx === 0 ? 2 : idx === 1 ? 1 : 3;
+            const heights = { 1: 'h-32', 2: 'h-24', 3: 'h-20' };
+            const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+            const bgColors = { 1: 'from-yellow-400 to-amber-500', 2: 'from-gray-300 to-slate-400', 3: 'from-orange-400 to-amber-600' };
+            
+            return `
+                <div class="flex flex-col items-center cursor-pointer transition-transform hover:scale-105" onclick="openQuickScoreModal('${student.__backendId}')">
+                    <div class="text-3xl mb-2">${medals[actualRank]}</div>
+                    <div class="text-white font-bold text-sm text-center mb-1">${securityUtils.sanitizeText(student.first_name)}</div>
+                    <div class="text-yellow-300 font-bold text-xl mb-2">${student.score || 0}</div>
+                    <div class="w-20 ${heights[actualRank]} bg-gradient-to-t ${bgColors[actualRank]} rounded-t-lg flex items-end justify-center pb-2">
+                        <span class="text-white font-bold text-lg">#${actualRank}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    container.className = 'space-y-2';
+    container.innerHTML = rest.map((student, idx) => {
+        const rank = idx + 4;
+        const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+        return `
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-800/30 border border-yellow-500/10 hover:bg-slate-700/50 cursor-pointer transition-all"
+                 onclick="openQuickScoreModal('${student.__backendId}')">
+                <span class="w-8 text-center text-yellow-400/70 font-bold">#${rank}</span>
+                <span class="text-sm">${houseIcon}</span>
+                <span class="flex-grow text-white text-sm font-medium">${securityUtils.sanitizeText(student.first_name)} ${securityUtils.sanitizeText(student.last_name)}</span>
+                <span class="text-yellow-400 font-bold">${student.score || 0}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+// Style 2: Cards
+function renderHighestCardsStyle(podium, container, sorted) {
+    if (podium) podium.innerHTML = '';
+    
+    container.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4';
+    container.innerHTML = sorted.map((student, idx) => {
+        const rank = idx + 1;
+        const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+        const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+        const medal = medals[rank] || '';
+        const bgClass = rank === 1 ? 'from-yellow-500/30 to-amber-600/30 border-yellow-500/50' :
+                        rank === 2 ? 'from-gray-400/30 to-slate-500/30 border-gray-400/50' :
+                        rank === 3 ? 'from-orange-500/30 to-amber-600/30 border-orange-500/50' :
+                        'from-slate-700/30 to-slate-800/30 border-slate-600/50';
+        
+        return `
+            <div class="bg-gradient-to-br ${bgClass} border rounded-2xl p-4 cursor-pointer hover:scale-105 transition-all text-center"
+                 onclick="openQuickScoreModal('${student.__backendId}')">
+                <div class="text-2xl mb-2">${medal || `#${rank}`}</div>
+                <div class="text-xl mb-1">${houseIcon}</div>
+                <div class="text-white font-bold text-sm mb-1 truncate">${securityUtils.sanitizeText(student.first_name)}</div>
+                <div class="text-slate-400 text-xs mb-2 truncate">${securityUtils.sanitizeText(student.last_name)}</div>
+                <div class="text-2xl font-bold ${getScoreColor(student.score || 0)}">${student.score || 0}</div>
+                <div class="text-amber-200/50 text-xs">คะแนน</div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Style 3: Table
+function renderHighestTableStyle(podium, container, sorted) {
+    if (podium) podium.innerHTML = '';
+    
+    container.className = 'overflow-x-auto';
+    container.innerHTML = `
+        <table class="w-full">
+            <thead>
+                <tr class="text-left text-amber-300/70 text-sm border-b border-yellow-500/20">
+                    <th class="pb-3 pl-2 w-16">อันดับ</th>
+                    <th class="pb-3">ชื่อ-นามสกุล</th>
+                    <th class="pb-3">Username</th>
+                    <th class="pb-3">บ้าน</th>
+                    <th class="pb-3 text-right pr-2">คะแนน</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${sorted.map((student, idx) => {
+                    const rank = idx + 1;
+                    const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+                    const houseName = student.house === 'hades' ? 'เฮเดส' : student.house === 'ceres' ? 'เซเรส' : 'อื่นๆ';
+                    const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+                    
+                    return `
+                        <tr class="border-b border-yellow-500/10 hover:bg-yellow-500/10 cursor-pointer transition-all"
+                            onclick="openQuickScoreModal('${student.__backendId}')">
+                            <td class="py-3 pl-2">
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${rank <= 3 ? 'text-xl' : 'bg-slate-700/50 text-slate-300'} font-bold text-sm">
+                                    ${medals[rank] || rank}
+                                </span>
+                            </td>
+                            <td class="py-3">
+                                <div class="text-white font-medium">${securityUtils.sanitizeText(student.first_name)} ${securityUtils.sanitizeText(student.last_name)}</div>
+                            </td>
+                            <td class="py-3">
+                                <span class="text-amber-300/70 text-sm">@${securityUtils.sanitizeText(student.minecraft_username)}</span>
+                            </td>
+                            <td class="py-3">
+                                <span class="text-sm">${houseIcon} ${houseName}</span>
+                            </td>
+                            <td class="py-3 text-right pr-2">
+                                <span class="text-xl font-bold ${getScoreColor(student.score || 0)}">${student.score || 0}</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+
+// ===== SECTION 2: Lowest Score (Alert Style) =====
+function renderLowestLeaderboard() {
+    const container = document.getElementById('lowest-leaderboard-container');
+    const emptyState = document.getElementById('lowest-leaderboard-empty');
+    
+    if (!container) return;
+    
+    let filtered = [...students];
+    if (lowestHouseFilter !== 'all') {
+        filtered = students.filter(s => s.house === lowestHouseFilter);
+    }
+    
+    if (filtered.length === 0) {
+        container.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+    
+    if (emptyState) emptyState.classList.add('hidden');
+    
+    const sorted = filtered.sort((a, b) => (a.score || 0) - (b.score || 0)).slice(0, 10);
+    
+    container.innerHTML = sorted.map((student, idx) => {
+        const rank = idx + 1;
+        const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+        const urgency = rank <= 3 ? 'border-red-500/50 bg-red-500/10' : 'border-red-500/20 bg-red-500/5';
+        
+        return `
+            <div class="${urgency} border rounded-xl p-4 cursor-pointer hover:bg-red-500/20 transition-all"
+                 onclick="openQuickScoreModal('${student.__backendId}')">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <span class="text-red-400 font-bold">#${rank}</span>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2">
+                            <span>${houseIcon}</span>
+                            <span class="text-white font-medium">${securityUtils.sanitizeText(student.first_name)} ${securityUtils.sanitizeText(student.last_name)}</span>
+                        </div>
+                        <p class="text-red-300/70 text-xs">@${securityUtils.sanitizeText(student.minecraft_username)}</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-red-400">${student.score || 0}</div>
+                        <div class="text-xs text-red-300/50">คะแนน</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ===== SECTION 3: Most Deducted (Table Style) =====
+function renderDeductedLeaderboard() {
+    const container = document.getElementById('deducted-leaderboard-container');
+    const emptyState = document.getElementById('deducted-leaderboard-empty');
+    
+    if (!container) return;
+    
+    let filtered = [...students];
+    if (deductedHouseFilter !== 'all') {
+        filtered = students.filter(s => s.house === deductedHouseFilter);
+    }
+    
+    // Filter only those with money deducted
+    filtered = filtered.filter(s => (s.money_deducted || 0) > 0);
+    
+    if (filtered.length === 0) {
+        container.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+    
+    if (emptyState) emptyState.classList.add('hidden');
+    
+    const sorted = filtered.sort((a, b) => (b.money_deducted || 0) - (a.money_deducted || 0)).slice(0, 10);
+    
+    container.innerHTML = sorted.map((student, idx) => {
+        const rank = idx + 1;
+        const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+        const houseName = student.house === 'hades' ? 'เฮเดส' : student.house === 'ceres' ? 'เซเรส' : 'อื่นๆ';
+        
+        return `
+            <tr class="border-b border-orange-500/10 hover:bg-orange-500/10 cursor-pointer transition-all"
+                onclick="openQuickScoreModal('${student.__backendId}')">
+                <td class="py-3 pl-2">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${rank <= 3 ? 'bg-orange-500/30 text-orange-300' : 'bg-slate-700/50 text-slate-400'} font-bold text-sm">
+                        ${rank}
+                    </span>
+                </td>
+                <td class="py-3">
+                    <div class="text-white font-medium">${securityUtils.sanitizeText(student.first_name)} ${securityUtils.sanitizeText(student.last_name)}</div>
+                    <div class="text-orange-300/50 text-xs">@${securityUtils.sanitizeText(student.minecraft_username)}</div>
+                </td>
+                <td class="py-3">
+                    <span class="text-sm">${houseIcon} ${houseName}</span>
+                </td>
+                <td class="py-3 text-right pr-2">
+                    <span class="text-xl font-bold text-orange-400">฿${student.money_deducted || 0}</span>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
 
 function updateStatistics() {
     const totalStudents = students.length;
@@ -2845,6 +3290,5 @@ function logout() {
         openSuperAdminModal();
     }
 })();
-
 
 

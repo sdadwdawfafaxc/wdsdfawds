@@ -1076,6 +1076,191 @@
             </div>
           </div>
         </div>
+
+        <!-- ===== LEADERBOARD SECTION 1: คะแนนสูงสุด (3 UI Styles + JPEG Export) ===== -->
+        <div id="highest-leaderboard-section" class="dark-glass rounded-2xl p-8 mb-8" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(161, 98, 7, 0.1) 100%); border: 1px solid rgba(234, 179, 8, 0.3);">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-3xl shadow-lg">
+                🏆
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-yellow-400 mb-1">
+                  ⭐ อันดับคะแนนสูงสุด
+                </h2>
+                <p class="text-amber-200/70 text-sm">
+                  นักศึกษาที่มีคะแนนมากที่สุด
+                </p>
+              </div>
+            </div>
+            <!-- JPEG Export Button -->
+            <button onclick="downloadHighestLeaderboardAsJPEG()" 
+              class="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-amber-500 to-yellow-600 text-white hover:from-amber-600 hover:to-yellow-700 transition-all flex items-center gap-2 shadow-lg">
+              📷 ดาวน์โหลด JPEG
+            </button>
+          </div>
+
+          <!-- UI Style Switcher -->
+          <div id="highest-style-controls" class="mb-4">
+            <p class="text-xs text-amber-200/50 mb-2">🎨 เลือกรูปแบบการแสดงผล:</p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setHighestUIStyle('podium')" id="highest-style-podium"
+                class="px-3 py-1.5 rounded-lg text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50">
+                🏆 Podium
+              </button>
+              <button onclick="setHighestUIStyle('cards')" id="highest-style-cards"
+                class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                🃏 Cards
+              </button>
+              <button onclick="setHighestUIStyle('table')" id="highest-style-table"
+                class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                📊 Table
+              </button>
+            </div>
+          </div>
+
+          <!-- House Filter for Highest -->
+          <div id="highest-house-controls" class="mb-4">
+            <p class="text-xs text-amber-200/50 mb-2">🏠 กรองตามบ้าน:</p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setHighestHouseFilter('all')" id="highest-filter-all"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50">
+                👥 ทั้งหมด
+              </button>
+              <button onclick="setHighestHouseFilter('hades')" id="highest-filter-hades"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                🐉 เฮเดส
+              </button>
+              <button onclick="setHighestHouseFilter('ceres')" id="highest-filter-ceres"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                🌿 เซเรส
+              </button>
+            </div>
+          </div>
+
+          <!-- Role Filter for Highest -->
+          <div id="highest-role-controls" class="mb-6">
+            <p class="text-xs text-amber-200/50 mb-2">👤 กรองตามบทบาท:</p>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setHighestRoleFilter('all')" id="highest-role-all"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50">
+                👥 ทั้งหมด
+              </button>
+              <button onclick="setHighestRoleFilter('student')" id="highest-role-student"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                📚 รุ่นน้อง
+              </button>
+              <button onclick="setHighestRoleFilter('senior')" id="highest-role-senior"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                🎓 รุ่นพี่
+              </button>
+            </div>
+          </div>
+
+          <!-- Leaderboard Content (dynamically rendered based on style) -->
+          <div id="highest-leaderboard-content">
+            <!-- Podium Area -->
+            <div id="highest-podium" class="flex justify-center items-end gap-4 mb-6"></div>
+            <!-- List/Cards/Table Area -->
+            <div id="highest-leaderboard-container" class="space-y-2"></div>
+          </div>
+          <div id="highest-leaderboard-empty" class="text-center py-6 hidden">
+            <span class="text-3xl">🏆</span>
+            <p class="text-yellow-300/50 mt-2">ยังไม่มีข้อมูล</p>
+          </div>
+        </div>
+
+        <!-- ===== LEADERBOARD SECTION 2: คะแนนต่ำสุด (Alert Style) ===== -->
+        <div class="dark-glass rounded-2xl p-8 mb-8" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(127, 29, 29, 0.1) 100%); border: 1px solid rgba(239, 68, 68, 0.3);">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center text-3xl shadow-lg animate-pulse">
+                ⚠️
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-red-400 mb-1">
+                  📉 อันดับคะแนนต่ำสุด
+                </h2>
+                <p class="text-red-200/70 text-sm">
+                  นักศึกษาที่ต้องการการพัฒนา
+                </p>
+              </div>
+            </div>
+            <!-- House Filter for Lowest -->
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setLowestHouseFilter('all')" id="lowest-filter-all"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/30 text-red-300 border border-red-500/50">
+                👥 ทั้งหมด
+              </button>
+              <button onclick="setLowestHouseFilter('hades')" id="lowest-filter-hades"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                🐉 เฮเดส
+              </button>
+              <button onclick="setLowestHouseFilter('ceres')" id="lowest-filter-ceres"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                🌿 เซเรส
+              </button>
+            </div>
+          </div>
+          <!-- Lowest scores list -->
+          <div id="lowest-leaderboard-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          <div id="lowest-leaderboard-empty" class="text-center py-6 hidden">
+            <span class="text-3xl">📉</span>
+            <p class="text-red-300/50 mt-2">ยังไม่มีข้อมูล</p>
+          </div>
+        </div>
+
+        <!-- ===== LEADERBOARD SECTION 3: หักเงินมากสุด (Finance Style) ===== -->
+        <div class="dark-glass rounded-2xl p-8 mb-8" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(124, 45, 18, 0.1) 100%); border: 1px solid rgba(249, 115, 22, 0.3);">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-amber-700 flex items-center justify-center text-3xl shadow-lg">
+                💸
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-orange-400 mb-1">
+                  💰 อันดับถูกหักเงินมากสุด
+                </h2>
+                <p class="text-orange-200/70 text-sm">
+                  ยอดเงินที่ถูกหักสะสม
+                </p>
+              </div>
+            </div>
+            <!-- House Filter for Deducted -->
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setDeductedHouseFilter('all')" id="deducted-filter-all"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-orange-500/30 text-orange-300 border border-orange-500/50">
+                👥 ทั้งหมด
+              </button>
+              <button onclick="setDeductedHouseFilter('hades')" id="deducted-filter-hades"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                🐉 เฮเดส
+              </button>
+              <button onclick="setDeductedHouseFilter('ceres')" id="deducted-filter-ceres"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50">
+                🌿 เซเรส
+              </button>
+            </div>
+          </div>
+          <!-- Money table style -->
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left text-orange-300/70 text-sm border-b border-orange-500/20">
+                  <th class="pb-3 pl-2">อันดับ</th>
+                  <th class="pb-3">ชื่อ</th>
+                  <th class="pb-3">บ้าน</th>
+                  <th class="pb-3 text-right pr-2">ยอดหักเงิน</th>
+                </tr>
+              </thead>
+              <tbody id="deducted-leaderboard-container"></tbody>
+            </table>
+          </div>
+          <div id="deducted-leaderboard-empty" class="text-center py-6 hidden">
+            <span class="text-3xl">💰</span>
+            <p class="text-orange-300/50 mt-2">ยังไม่มีข้อมูล</p>
+          </div>
+        </div>
         <div class="dark-glass rounded-2xl overflow-hidden super-admin-glow">
           <div class="px-8 py-6 glass-effect border-b border-slate-600">
             <div class="flex justify-between items-center">
