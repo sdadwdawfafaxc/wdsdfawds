@@ -1145,31 +1145,17 @@ function updateUI() {
 }
 
 // Leaderboard state for each section
-let highestHouseFilter = 'all';
+let juniorHouseFilter = 'all';
+let seniorHouseFilter = 'all';
 let lowestHouseFilter = 'all';
 let deductedHouseFilter = 'all';
+let juniorUIStyle = 'podium'; // 'podium', 'cards', 'table'
+let seniorUIStyle = 'podium'; // 'podium', 'cards', 'table'
 let highestUIStyle = 'podium'; // 'podium', 'cards', 'table'
-let highestRoleFilter = 'all'; // 'all', 'student', 'senior'
+let highestHouseFilter = 'all';
+let highestRoleFilter = 'all';
 
-function setHighestRoleFilter(role) {
-    highestRoleFilter = role;
-    updateHighestRoleButtons();
-    renderHighestLeaderboard();
-}
-
-function updateHighestRoleButtons() {
-    ['all', 'student', 'senior'].forEach(r => {
-        const btn = document.getElementById(`highest-role-${r}`);
-        if (btn) {
-            if (r === highestRoleFilter) {
-                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50';
-            } else {
-                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
-            }
-        }
-    });
-}
-
+// ===== Highest Leaderboard Functions (Combined View) =====
 function setHighestUIStyle(style) {
     highestUIStyle = style;
     updateHighestStyleButtons();
@@ -1189,82 +1175,13 @@ function updateHighestStyleButtons() {
     });
 }
 
-async function downloadHighestLeaderboardAsJPEG() {
-    const section = document.getElementById('highest-leaderboard-section');
-    if (!section) return;
-    
-    // Specific elements to hide during capture
-    const styleControls = document.getElementById('highest-style-controls');
-    const houseControls = document.getElementById('highest-house-controls');
-    const roleControls = document.getElementById('highest-role-controls');
-    const downloadBtn = section.querySelector('button[onclick*="downloadHighest"]');
-    
-    try {
-        // Hide UI controls for clean screenshot
-        if (styleControls) styleControls.style.display = 'none';
-        if (houseControls) houseControls.style.display = 'none';
-        if (roleControls) roleControls.style.display = 'none';
-        if (downloadBtn) downloadBtn.style.display = 'none';
-        
-        // Dynamic import html2canvas
-        if (typeof html2canvas === 'undefined') {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-            document.head.appendChild(script);
-            await new Promise(resolve => script.onload = resolve);
-        }
-        
-        // Create canvas
-        const canvas = await html2canvas(section, {
-            backgroundColor: '#1e293b',
-            scale: 2,
-            useCORS: true,
-            logging: false
-        });
-        
-        // Generate filename: category_style_house_role_date
-        const dateStr = new Date().toISOString().split('T')[0];
-        const houseStr = highestHouseFilter === 'all' ? 'ทั้งหมด' : highestHouseFilter === 'hades' ? 'เฮเดส' : 'เซเรส';
-        const styleStr = highestUIStyle === 'podium' ? 'Podium' : highestUIStyle === 'cards' ? 'Cards' : 'Table';
-        const roleStr = highestRoleFilter === 'all' ? 'ทั้งหมด' : highestRoleFilter === 'student' ? 'รุ่นน้อง' : 'รุ่นพี่';
-        const filename = `อันดับคะแนนสูงสุด_${styleStr}_${houseStr}_${roleStr}_${dateStr}.jpg`;
-        
-        // Download
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = canvas.toDataURL('image/jpeg', 0.95);
-        link.click();
-    } catch (error) {
-        console.error('Error downloading JPEG:', error);
-        alert('ไม่สามารถดาวน์โหลดได้ กรุณาลองใหม่อีกครั้ง');
-    } finally {
-        // Restore hidden elements
-        if (styleControls) styleControls.style.display = '';
-        if (houseControls) houseControls.style.display = '';
-        if (roleControls) roleControls.style.display = '';
-        if (downloadBtn) downloadBtn.style.display = '';
-    }
-}
-
 function setHighestHouseFilter(house) {
     highestHouseFilter = house;
-    updateHighestFilterButtons();
+    updateHighestHouseFilterButtons();
     renderHighestLeaderboard();
 }
 
-function setLowestHouseFilter(house) {
-    lowestHouseFilter = house;
-    updateLowestFilterButtons();
-    renderLowestLeaderboard();
-}
-
-function setDeductedHouseFilter(house) {
-    deductedHouseFilter = house;
-    updateDeductedFilterButtons();
-    renderDeductedLeaderboard();
-}
-
-function updateHighestFilterButtons() {
+function updateHighestHouseFilterButtons() {
     ['all', 'hades', 'ceres'].forEach(h => {
         const btn = document.getElementById(`highest-filter-${h}`);
         if (btn) {
@@ -1277,40 +1194,97 @@ function updateHighestFilterButtons() {
     });
 }
 
-function updateLowestFilterButtons() {
-    ['all', 'hades', 'ceres'].forEach(h => {
-        const btn = document.getElementById(`lowest-filter-${h}`);
-        if (btn) {
-            if (h === lowestHouseFilter) {
-                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/30 text-red-300 border border-red-500/50';
-            } else {
-                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
-            }
-        }
-    });
-}
-
-function updateDeductedFilterButtons() {
-    ['all', 'hades', 'ceres'].forEach(h => {
-        const btn = document.getElementById(`deducted-filter-${h}`);
-        if (btn) {
-            if (h === deductedHouseFilter) {
-                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-orange-500/30 text-orange-300 border border-orange-500/50';
-            } else {
-                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
-            }
-        }
-    });
-}
-
-// Render all 3 leaderboards
-function updateScoreLeaderboard() {
+function setHighestRoleFilter(role) {
+    highestRoleFilter = role;
+    updateHighestRoleFilterButtons();
     renderHighestLeaderboard();
-    renderLowestLeaderboard();
-    renderDeductedLeaderboard();
 }
 
-// ===== SECTION 1: Highest Score (3 UI Styles) =====
+function updateHighestRoleFilterButtons() {
+    ['all', 'student', 'senior'].forEach(r => {
+        const btn = document.getElementById(`highest-role-${r}`);
+        if (btn) {
+            if (r === highestRoleFilter) {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+async function downloadHighestLeaderboardAsJPEG() {
+    const section = document.getElementById('highest-leaderboard-section');
+    if (!section) return;
+    
+    const styleControls = document.getElementById('highest-style-controls');
+    const houseControls = document.getElementById('highest-house-controls');
+    const roleControls = document.getElementById('highest-role-controls');
+    const downloadBtn = section.querySelector('button[onclick*="downloadHighest"]');
+    
+    try {
+        if (styleControls) styleControls.style.display = 'none';
+        if (houseControls) houseControls.style.display = 'none';
+        if (roleControls) roleControls.style.display = 'none';
+        if (downloadBtn) downloadBtn.style.display = 'none';
+        
+        if (typeof html2canvas === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            document.head.appendChild(script);
+            await new Promise(resolve => script.onload = resolve);
+        }
+        
+        // Fixed portrait dimensions for consistent output
+        const fixedWidth = 400;
+        
+        const canvas = await html2canvas(section, {
+            backgroundColor: '#1e293b',
+            scale: 1,
+            useCORS: true,
+            logging: false,
+            allowTaint: true,
+            imageTimeout: 0,
+            onclone: function(clonedDoc) {
+                const clonedSection = clonedDoc.getElementById('highest-leaderboard-section');
+                if (clonedSection) {
+                    clonedSection.style.fontFamily = 'Arial, Helvetica, sans-serif';
+                    clonedSection.style.width = fixedWidth + 'px';
+                    clonedSection.style.maxWidth = fixedWidth + 'px';
+                    
+                    // Apply font to all text elements
+                    const allTextElements = clonedSection.querySelectorAll('*');
+                    allTextElements.forEach(el => {
+                        el.style.fontFamily = 'Arial, Helvetica, sans-serif';
+                        el.style.letterSpacing = 'normal';
+                        el.style.wordSpacing = 'normal';
+                    });
+                }
+            }
+        });
+        
+        const dateStr = new Date().toISOString().split('T')[0];
+        const houseStr = highestHouseFilter === 'all' ? 'ทั้งหมด' : highestHouseFilter === 'hades' ? 'เฮเดส' : 'เซเรส';
+        const roleStr = highestRoleFilter === 'all' ? 'ทุกบทบาท' : highestRoleFilter === 'student' ? 'รุ่นน้อง' : 'รุ่นพี่';
+        const styleStr = highestUIStyle === 'podium' ? 'Podium' : highestUIStyle === 'cards' ? 'Cards' : 'Table';
+        const filename = `อันดับคะแนนสูงสุด_${styleStr}_${roleStr}_${houseStr}_${dateStr}.jpg`;
+        
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/jpeg', 1.0);
+        link.click();
+    } catch (error) {
+        console.error('Error downloading JPEG:', error);
+        alert('ไม่สามารถดาวน์โหลดได้ กรุณาลองใหม่อีกครั้ง');
+    } finally {
+        if (styleControls) styleControls.style.display = '';
+        if (houseControls) houseControls.style.display = '';
+        if (roleControls) roleControls.style.display = '';
+        if (downloadBtn) downloadBtn.style.display = '';
+    }
+}
+
+// ===== Highest Leaderboard Rendering =====
 function renderHighestLeaderboard() {
     const podium = document.getElementById('highest-podium');
     const container = document.getElementById('highest-leaderboard-container');
@@ -1318,18 +1292,19 @@ function renderHighestLeaderboard() {
     
     if (!container) return;
     
+    // Start with all students
     let filtered = [...students];
+    
+    // Filter by role
+    if (highestRoleFilter === 'student') {
+        filtered = filtered.filter(s => s.role !== 'senior');
+    } else if (highestRoleFilter === 'senior') {
+        filtered = filtered.filter(s => s.role === 'senior');
+    }
     
     // Filter by house
     if (highestHouseFilter !== 'all') {
         filtered = filtered.filter(s => s.house === highestHouseFilter);
-    }
-    
-    // Filter by role (senior vs normal/student)
-    if (highestRoleFilter !== 'all') {
-        // Map button value to actual role value: 'student' button -> 'normal' role
-        const roleToFilter = highestRoleFilter === 'student' ? 'normal' : highestRoleFilter;
-        filtered = filtered.filter(s => s.role === roleToFilter);
     }
     
     if (filtered.length === 0) {
@@ -1359,8 +1334,571 @@ function renderHighestLeaderboard() {
     }
 }
 
-// Style 1: Podium
+// Highest Podium Style
 function renderHighestPodiumStyle(podium, container, sorted) {
+    const top3 = sorted.slice(0, 3);
+    const rest = sorted.slice(3);
+    
+    if (podium) {
+        podium.className = 'flex justify-center items-end gap-4 mb-6';
+        const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
+        podium.innerHTML = podiumOrder.map((student, idx) => {
+            if (!student) return '';
+            const actualRank = idx === 0 ? 2 : idx === 1 ? 1 : 3;
+            const heights = { 1: 'h-32', 2: 'h-24', 3: 'h-20' };
+            const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+            const bgColors = { 1: 'from-yellow-400 to-amber-500', 2: 'from-gray-300 to-slate-400', 3: 'from-orange-400 to-amber-600' };
+            const roleIcon = student.role === 'senior' ? '🎓' : '📚';
+            
+            return `
+                <div class="flex flex-col items-center cursor-pointer transition-transform hover:scale-105" onclick="openQuickScoreModal('${student.__backendId}')">
+                    <div class="text-3xl mb-2">${medals[actualRank]}</div>
+                    <div class="text-xs text-amber-200/50 mb-1">${roleIcon}</div>
+                    <div class="text-white font-bold text-sm text-center mb-1">${securityUtils.sanitizeText(student.first_name)}</div>
+                    <div class="text-yellow-300 font-bold text-xl mb-2">${student.score || 0}</div>
+                    <div class="w-20 ${heights[actualRank]} bg-gradient-to-t ${bgColors[actualRank]} rounded-t-lg flex items-end justify-center pb-2">
+                        <span class="text-white font-bold text-lg">#${actualRank}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    container.className = 'space-y-2';
+    container.innerHTML = rest.map((student, idx) => {
+        const rank = idx + 4;
+        const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
+        const roleIcon = student.role === 'senior' ? '🎓' : '📚';
+        return `
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-800/30 border border-yellow-500/10 hover:bg-slate-700/50 cursor-pointer transition-all"
+                 onclick="openQuickScoreModal('${student.__backendId}')">
+                <span class="w-8 text-center text-yellow-400/70 font-bold">#${rank}</span>
+                <span class="text-sm">${houseIcon}</span>
+                <span class="text-xs">${roleIcon}</span>
+                <span class="flex-grow text-white text-sm font-medium">${securityUtils.sanitizeText(student.first_name)} ${securityUtils.sanitizeText(student.last_name)}</span>
+                <span class="text-yellow-400 font-bold">${student.score || 0}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+// Highest Cards Style
+function renderHighestCardsStyle(podium, container, sorted) {
+    if (podium) podium.innerHTML = '';
+    
+    container.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4';
+    container.innerHTML = sorted.map((student, idx) => {
+        const rank = idx + 1;
+        const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
+        const roleIcon = student.role === 'senior' ? '🎓' : '📚';
+        const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+        const medal = medals[rank] || '';
+        const bgClass = rank === 1 ? 'from-yellow-500/30 to-amber-600/30 border-yellow-500/50' :
+                        rank === 2 ? 'from-gray-400/30 to-slate-500/30 border-gray-400/50' :
+                        rank === 3 ? 'from-orange-500/30 to-amber-600/30 border-orange-500/50' :
+                        'from-slate-700/30 to-slate-800/30 border-slate-600/50';
+        
+        return `
+            <div class="bg-gradient-to-br ${bgClass} border rounded-2xl p-4 cursor-pointer hover:scale-105 transition-all text-center"
+                 onclick="openQuickScoreModal('${student.__backendId}')">
+                <div class="text-2xl mb-2">${medal || `#${rank}`}</div>
+                <div class="text-xl mb-1">${houseIcon}</div>
+                <div class="text-xs text-amber-200/50 mb-1">${roleIcon}</div>
+                <div class="text-white font-bold text-sm mb-1 truncate">${securityUtils.sanitizeText(student.first_name)}</div>
+                <div class="text-slate-400 text-xs mb-2 truncate">${securityUtils.sanitizeText(student.last_name)}</div>
+                <div class="text-2xl font-bold ${getScoreColor(student.score || 0)}">${student.score || 0}</div>
+                <div class="text-amber-200/50 text-xs">คะแนน</div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Highest Table Style
+function renderHighestTableStyle(podium, container, sorted) {
+    if (podium) podium.innerHTML = '';
+    
+    container.className = 'overflow-x-auto';
+    container.innerHTML = `
+        <table class="w-full">
+            <thead>
+                <tr class="text-left text-amber-300/70 text-sm border-b border-yellow-500/20">
+                    <th class="pb-3 pl-2 w-16">อันดับ</th>
+                    <th class="pb-3">ชื่อ-นามสกุล</th>
+                    <th class="pb-3">Username</th>
+                    <th class="pb-3">บทบาท</th>
+                    <th class="pb-3">บ้าน</th>
+                    <th class="pb-3 text-right pr-2">คะแนน</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${sorted.map((student, idx) => {
+                    const rank = idx + 1;
+                    const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
+                    const houseName = student.house === 'hades' ? 'เฮเดส' : student.house === 'ceres' ? 'เซเรส' : 'อื่นๆ';
+                    const roleIcon = student.role === 'senior' ? '🎓' : '📚';
+                    const roleName = student.role === 'senior' ? 'รุ่นพี่' : 'รุ่นน้อง';
+                    const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+                    
+                    return `
+                        <tr class="border-b border-yellow-500/10 hover:bg-yellow-500/10 cursor-pointer transition-all"
+                            onclick="openQuickScoreModal('${student.__backendId}')">
+                            <td class="py-3 pl-2">
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${rank <= 3 ? 'text-xl' : 'bg-slate-700/50 text-slate-300'} font-bold text-sm">
+                                    ${medals[rank] || rank}
+                                </span>
+                            </td>
+                            <td class="py-3">
+                                <div class="text-white font-medium">${securityUtils.sanitizeText(student.first_name)} ${securityUtils.sanitizeText(student.last_name)}</div>
+                            </td>
+                            <td class="py-3">
+                                <span class="text-amber-300/70 text-sm">@${securityUtils.sanitizeText(student.minecraft_username)}</span>
+                            </td>
+                            <td class="py-3">
+                                <span class="text-sm">${roleIcon} ${roleName}</span>
+                            </td>
+                            <td class="py-3">
+                                <span class="text-sm">${houseIcon} ${houseName}</span>
+                            </td>
+                            <td class="py-3 text-right pr-2">
+                                <span class="text-xl font-bold ${getScoreColor(student.score || 0)}">${student.score || 0}</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+// ===== Junior Leaderboard Functions =====
+function setJuniorUIStyle(style) {
+    juniorUIStyle = style;
+    updateJuniorStyleButtons();
+    renderJuniorLeaderboard();
+}
+
+function updateJuniorStyleButtons() {
+    ['podium', 'cards', 'table'].forEach(s => {
+        const btn = document.getElementById(`junior-style-${s}`);
+        if (btn) {
+            if (s === juniorUIStyle) {
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-500/30 text-blue-300 border border-blue-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+function setJuniorHouseFilter(house) {
+    juniorHouseFilter = house;
+    updateJuniorFilterButtons();
+    renderJuniorLeaderboard();
+}
+
+function updateJuniorFilterButtons() {
+    ['all', 'hades', 'ceres'].forEach(h => {
+        const btn = document.getElementById(`junior-filter-${h}`);
+        if (btn) {
+            if (h === juniorHouseFilter) {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-blue-500/30 text-blue-300 border border-blue-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+async function downloadJuniorLeaderboardAsJPEG() {
+    const section = document.getElementById('junior-leaderboard-section');
+    if (!section) return;
+    
+    const styleControls = document.getElementById('junior-style-controls');
+    const houseControls = document.getElementById('junior-house-controls');
+    const downloadBtn = section.querySelector('button[onclick*="downloadJunior"]');
+    
+    try {
+        if (styleControls) styleControls.style.display = 'none';
+        if (houseControls) houseControls.style.display = 'none';
+        if (downloadBtn) downloadBtn.style.display = 'none';
+        
+        if (typeof html2canvas === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            document.head.appendChild(script);
+            await new Promise(resolve => script.onload = resolve);
+        }
+        
+        const canvas = await html2canvas(section, {
+            backgroundColor: '#1e293b',
+            scale: 2,
+            useCORS: true,
+            logging: false
+        });
+        
+        const dateStr = new Date().toISOString().split('T')[0];
+        const houseStr = juniorHouseFilter === 'all' ? 'ทั้งหมด' : juniorHouseFilter === 'hades' ? 'เฮเดส' : 'เซเรส';
+        const styleStr = juniorUIStyle === 'podium' ? 'Podium' : juniorUIStyle === 'cards' ? 'Cards' : 'Table';
+        const filename = `อันดับคะแนนรุ่นน้อง_${styleStr}_${houseStr}_${dateStr}.jpg`;
+        
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.click();
+    } catch (error) {
+        console.error('Error downloading JPEG:', error);
+        alert('ไม่สามารถดาวน์โหลดได้ กรุณาลองใหม่อีกครั้ง');
+    } finally {
+        if (styleControls) styleControls.style.display = '';
+        if (houseControls) houseControls.style.display = '';
+        if (downloadBtn) downloadBtn.style.display = '';
+    }
+}
+
+// ===== Senior Leaderboard Functions =====
+function setSeniorUIStyle(style) {
+    seniorUIStyle = style;
+    updateSeniorStyleButtons();
+    renderSeniorLeaderboard();
+}
+
+function updateSeniorStyleButtons() {
+    ['podium', 'cards', 'table'].forEach(s => {
+        const btn = document.getElementById(`senior-style-${s}`);
+        if (btn) {
+            if (s === seniorUIStyle) {
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+function setSeniorHouseFilter(house) {
+    seniorHouseFilter = house;
+    updateSeniorFilterButtons();
+    renderSeniorLeaderboard();
+}
+
+function updateSeniorFilterButtons() {
+    ['all', 'hades', 'ceres'].forEach(h => {
+        const btn = document.getElementById(`senior-filter-${h}`);
+        if (btn) {
+            if (h === seniorHouseFilter) {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-500/30 text-yellow-300 border border-yellow-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+async function downloadSeniorLeaderboardAsJPEG() {
+    const section = document.getElementById('senior-leaderboard-section');
+    if (!section) return;
+    
+    const styleControls = document.getElementById('senior-style-controls');
+    const houseControls = document.getElementById('senior-house-controls');
+    const downloadBtn = section.querySelector('button[onclick*="downloadSenior"]');
+    
+    try {
+        if (styleControls) styleControls.style.display = 'none';
+        if (houseControls) houseControls.style.display = 'none';
+        if (downloadBtn) downloadBtn.style.display = 'none';
+        
+        if (typeof html2canvas === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            document.head.appendChild(script);
+            await new Promise(resolve => script.onload = resolve);
+        }
+        
+        const canvas = await html2canvas(section, {
+            backgroundColor: '#1e293b',
+            scale: 2,
+            useCORS: true,
+            logging: false
+        });
+        
+        const dateStr = new Date().toISOString().split('T')[0];
+        const houseStr = seniorHouseFilter === 'all' ? 'ทั้งหมด' : seniorHouseFilter === 'hades' ? 'เฮเดส' : 'เซเรส';
+        const styleStr = seniorUIStyle === 'podium' ? 'Podium' : seniorUIStyle === 'cards' ? 'Cards' : 'Table';
+        const filename = `อันดับคะแนนรุ่นพี่_${styleStr}_${houseStr}_${dateStr}.jpg`;
+        
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.click();
+    } catch (error) {
+        console.error('Error downloading JPEG:', error);
+        alert('ไม่สามารถดาวน์โหลดได้ กรุณาลองใหม่อีกครั้ง');
+    } finally {
+        if (styleControls) styleControls.style.display = '';
+        if (houseControls) houseControls.style.display = '';
+        if (downloadBtn) downloadBtn.style.display = '';
+    }
+}
+
+function setLowestHouseFilter(house) {
+    lowestHouseFilter = house;
+    updateLowestFilterButtons();
+    renderLowestLeaderboard();
+}
+
+function setDeductedHouseFilter(house) {
+    deductedHouseFilter = house;
+    updateDeductedFilterButtons();
+    renderDeductedLeaderboard();
+}
+
+function updateLowestFilterButtons() {
+    ['all', 'hades', 'ceres'].forEach(h => {
+        const btn = document.getElementById(`lowest-filter-${h}`);
+        if (btn) {
+            if (h === lowestHouseFilter) {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-red-500/30 text-red-300 border border-red-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+function updateDeductedFilterButtons() {
+    ['all', 'hades', 'ceres'].forEach(h => {
+        const btn = document.getElementById(`deducted-filter-${h}`);
+        if (btn) {
+            if (h === deductedHouseFilter) {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-orange-500/30 text-orange-300 border border-orange-500/50';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-full text-xs font-medium bg-slate-700/50 text-slate-400 border border-slate-600 hover:bg-slate-600/50';
+            }
+        }
+    });
+}
+
+// Render all leaderboards
+function updateScoreLeaderboard() {
+    renderHighestLeaderboard();
+    renderJuniorLeaderboard();
+    renderSeniorLeaderboard();
+    renderLowestLeaderboard();
+    renderDeductedLeaderboard();
+}
+
+// ===== SECTION 1A: Junior Leaderboard (รุ่นน้อง) =====
+function renderJuniorLeaderboard() {
+    const podium = document.getElementById('junior-podium');
+    const container = document.getElementById('junior-leaderboard-container');
+    const emptyState = document.getElementById('junior-leaderboard-empty');
+    
+    if (!container) return;
+    
+    // Filter only juniors (normal, medical, council roles - NOT senior)
+    let filtered = [...students].filter(s => s.role !== 'senior');
+    
+    // Filter by house
+    if (juniorHouseFilter !== 'all') {
+        filtered = filtered.filter(s => s.house === juniorHouseFilter);
+    }
+    
+    if (filtered.length === 0) {
+        if (podium) podium.innerHTML = '';
+        container.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+    
+    if (emptyState) emptyState.classList.add('hidden');
+    
+    const sorted = filtered.sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 10);
+    
+    // Render based on selected style
+    switch (juniorUIStyle) {
+        case 'podium':
+            renderJuniorPodiumStyle(podium, container, sorted);
+            break;
+        case 'cards':
+            renderJuniorCardsStyle(podium, container, sorted);
+            break;
+        case 'table':
+            renderJuniorTableStyle(podium, container, sorted);
+            break;
+        default:
+            renderJuniorPodiumStyle(podium, container, sorted);
+    }
+}
+
+// Junior Podium Style
+function renderJuniorPodiumStyle(podium, container, sorted) {
+    const top3 = sorted.slice(0, 3);
+    const rest = sorted.slice(3);
+    
+    if (podium) {
+        podium.className = 'flex justify-center items-end gap-4 mb-6';
+        const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
+        podium.innerHTML = podiumOrder.map((student, idx) => {
+            if (!student) return '';
+            const actualRank = idx === 0 ? 2 : idx === 1 ? 1 : 3;
+            const heights = { 1: 'h-32', 2: 'h-24', 3: 'h-20' };
+            const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+            const bgColors = { 1: 'from-blue-400 to-indigo-500', 2: 'from-gray-300 to-slate-400', 3: 'from-blue-300 to-indigo-400' };
+            
+            return `
+                <div class="flex flex-col items-center cursor-pointer transition-transform hover:scale-105" onclick="openQuickScoreModal('${student.__backendId}')">
+                    <div class="text-3xl mb-2">${medals[actualRank]}</div>
+                    <div class="text-white font-bold text-sm text-center mb-1">${securityUtils.sanitizeText(student.first_name)}</div>
+                    <div class="text-blue-300 font-bold text-xl mb-2">${student.score || 0}</div>
+                    <div class="w-20 ${heights[actualRank]} bg-gradient-to-t ${bgColors[actualRank]} rounded-t-lg flex items-end justify-center pb-2">
+                        <span class="text-white font-bold text-lg">#${actualRank}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    container.className = 'space-y-2';
+    container.innerHTML = rest.map((student, idx) => {
+        const rank = idx + 4;
+        const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
+        return `
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-800/30 border border-blue-500/10 hover:bg-slate-700/50 cursor-pointer transition-all"
+                 onclick="openQuickScoreModal('${student.__backendId}')">
+                <span class="w-8 text-center text-blue-400/70 font-bold">#${rank}</span>
+                <span class="text-sm">${houseIcon}</span>
+                <span class="flex-grow text-white text-sm font-medium">${securityUtils.sanitizeText(student.first_name)} ${securityUtils.sanitizeText(student.last_name)}</span>
+                <span class="text-blue-400 font-bold">${student.score || 0}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+// Junior Cards Style
+function renderJuniorCardsStyle(podium, container, sorted) {
+    if (podium) podium.innerHTML = '';
+    
+    container.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4';
+    container.innerHTML = sorted.map((student, idx) => {
+        const rank = idx + 1;
+        const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
+        const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+        const medal = medals[rank] || '';
+        const bgClass = rank === 1 ? 'from-blue-500/30 to-indigo-600/30 border-blue-500/50' :
+                        rank === 2 ? 'from-gray-400/30 to-slate-500/30 border-gray-400/50' :
+                        rank === 3 ? 'from-blue-400/30 to-indigo-500/30 border-blue-400/50' :
+                        'from-slate-700/30 to-slate-800/30 border-slate-600/50';
+        
+        return `
+            <div class="bg-gradient-to-br ${bgClass} border rounded-2xl p-4 cursor-pointer hover:scale-105 transition-all text-center"
+                 onclick="openQuickScoreModal('${student.__backendId}')">
+                <div class="text-2xl mb-2">${medal || `#${rank}`}</div>
+                <div class="text-xl mb-1">${houseIcon}</div>
+                <div class="text-white font-bold text-sm mb-1 truncate">${securityUtils.sanitizeText(student.first_name)}</div>
+                <div class="text-slate-400 text-xs mb-2 truncate">${securityUtils.sanitizeText(student.last_name)}</div>
+                <div class="text-2xl font-bold ${getScoreColor(student.score || 0)}">${student.score || 0}</div>
+                <div class="text-blue-200/50 text-xs">คะแนน</div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Junior Table Style
+function renderJuniorTableStyle(podium, container, sorted) {
+    if (podium) podium.innerHTML = '';
+    
+    container.className = 'overflow-x-auto';
+    container.innerHTML = `
+        <table class="w-full">
+            <thead>
+                <tr class="text-left text-blue-300/70 text-sm border-b border-blue-500/20">
+                    <th class="pb-3 pl-2 w-16">อันดับ</th>
+                    <th class="pb-3">ชื่อ-นามสกุล</th>
+                    <th class="pb-3">Username</th>
+                    <th class="pb-3">บ้าน</th>
+                    <th class="pb-3 text-right pr-2">คะแนน</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${sorted.map((student, idx) => {
+                    const rank = idx + 1;
+                    const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
+                    const houseName = student.house === 'hades' ? 'เฮเดส' : student.house === 'ceres' ? 'เซเรส' : 'อื่นๆ';
+                    const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+                    
+                    return `
+                        <tr class="border-b border-blue-500/10 hover:bg-blue-500/10 cursor-pointer transition-all"
+                            onclick="openQuickScoreModal('${student.__backendId}')">
+                            <td class="py-3 pl-2">
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${rank <= 3 ? 'text-xl' : 'bg-slate-700/50 text-slate-300'} font-bold text-sm">
+                                    ${medals[rank] || rank}
+                                </span>
+                            </td>
+                            <td class="py-3">
+                                <div class="text-white font-medium">${securityUtils.sanitizeText(student.first_name)} ${securityUtils.sanitizeText(student.last_name)}</div>
+                            </td>
+                            <td class="py-3">
+                                <span class="text-blue-300/70 text-sm">@${securityUtils.sanitizeText(student.minecraft_username)}</span>
+                            </td>
+                            <td class="py-3">
+                                <span class="text-sm">${houseIcon} ${houseName}</span>
+                            </td>
+                            <td class="py-3 text-right pr-2">
+                                <span class="text-xl font-bold ${getScoreColor(student.score || 0)}">${student.score || 0}</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+// ===== SECTION 1B: Senior Leaderboard (รุ่นพี่) =====
+function renderSeniorLeaderboard() {
+    const podium = document.getElementById('senior-podium');
+    const container = document.getElementById('senior-leaderboard-container');
+    const emptyState = document.getElementById('senior-leaderboard-empty');
+    
+    if (!container) return;
+    
+    // Filter only seniors
+    let filtered = [...students].filter(s => s.role === 'senior');
+    
+    // Filter by house
+    if (seniorHouseFilter !== 'all') {
+        filtered = filtered.filter(s => s.house === seniorHouseFilter);
+    }
+    
+    if (filtered.length === 0) {
+        if (podium) podium.innerHTML = '';
+        container.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+    
+    if (emptyState) emptyState.classList.add('hidden');
+    
+    const sorted = filtered.sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 10);
+    
+    // Render based on selected style
+    switch (seniorUIStyle) {
+        case 'podium':
+            renderSeniorPodiumStyle(podium, container, sorted);
+            break;
+        case 'cards':
+            renderSeniorCardsStyle(podium, container, sorted);
+            break;
+        case 'table':
+            renderSeniorTableStyle(podium, container, sorted);
+            break;
+        default:
+            renderSeniorPodiumStyle(podium, container, sorted);
+    }
+}
+
+// Senior Podium Style
+function renderSeniorPodiumStyle(podium, container, sorted) {
     const top3 = sorted.slice(0, 3);
     const rest = sorted.slice(3);
     
@@ -1390,7 +1928,7 @@ function renderHighestPodiumStyle(podium, container, sorted) {
     container.className = 'space-y-2';
     container.innerHTML = rest.map((student, idx) => {
         const rank = idx + 4;
-        const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+        const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
         return `
             <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-800/30 border border-yellow-500/10 hover:bg-slate-700/50 cursor-pointer transition-all"
                  onclick="openQuickScoreModal('${student.__backendId}')">
@@ -1403,14 +1941,14 @@ function renderHighestPodiumStyle(podium, container, sorted) {
     }).join('');
 }
 
-// Style 2: Cards
-function renderHighestCardsStyle(podium, container, sorted) {
+// Senior Cards Style
+function renderSeniorCardsStyle(podium, container, sorted) {
     if (podium) podium.innerHTML = '';
     
     container.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4';
     container.innerHTML = sorted.map((student, idx) => {
         const rank = idx + 1;
-        const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+        const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
         const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
         const medal = medals[rank] || '';
         const bgClass = rank === 1 ? 'from-yellow-500/30 to-amber-600/30 border-yellow-500/50' :
@@ -1432,8 +1970,8 @@ function renderHighestCardsStyle(podium, container, sorted) {
     }).join('');
 }
 
-// Style 3: Table
-function renderHighestTableStyle(podium, container, sorted) {
+// Senior Table Style
+function renderSeniorTableStyle(podium, container, sorted) {
     if (podium) podium.innerHTML = '';
     
     container.className = 'overflow-x-auto';
@@ -1451,7 +1989,7 @@ function renderHighestTableStyle(podium, container, sorted) {
             <tbody>
                 ${sorted.map((student, idx) => {
                     const rank = idx + 1;
-                    const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+                    const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
                     const houseName = student.house === 'hades' ? 'เฮเดส' : student.house === 'ceres' ? 'เซเรส' : 'อื่นๆ';
                     const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
                     
@@ -1508,7 +2046,7 @@ function renderLowestLeaderboard() {
     
     container.innerHTML = sorted.map((student, idx) => {
         const rank = idx + 1;
-        const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+        const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
         const urgency = rank <= 3 ? 'border-red-500/50 bg-red-500/10' : 'border-red-500/20 bg-red-500/5';
         
         return `
@@ -1562,7 +2100,7 @@ function renderDeductedLeaderboard() {
     
     container.innerHTML = sorted.map((student, idx) => {
         const rank = idx + 1;
-        const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+        const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
         const houseName = student.house === 'hades' ? 'เฮเดส' : student.house === 'ceres' ? 'เซเรส' : 'อื่นๆ';
         
         return `
@@ -1643,7 +2181,7 @@ function updateStudentsList() {
         sortedStudents.forEach((student, index) => {
             const row = document.createElement('tr');
             row.className = 'hover:bg-slate-700/50 transition-colors';
-            const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+            const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
             const roleIcon = getRoleIcon(student.role);
             const playerTypeIcon = student.player_type === 'minecraft' ? '🎮' : '👤';
             const adminButtons = list === adminList ? securityUtils.raw(`
@@ -1722,7 +2260,7 @@ function updateScoreCards() {
             const card = document.createElement('div');
             card.className = 'score-card-glow rounded-xl p-4 cursor-pointer transition-all duration-300 hover:scale-105';
             card.onclick = () => openQuickScoreModal(student.__backendId);
-            const houseIcon = student.house === 'hades' ? '🐉' : student.house === 'ceres' ? '🌿' : '🏠';
+            const houseIcon = student.house === 'hades' ? '⚫' : student.house === 'ceres' ? '⚪' : '🏠';
             const playerTypeIcon = student.player_type === 'minecraft' ? '🎮' : '👤';
             card.innerHTML = securityUtils.html`
                 <div class="text-center">
@@ -1772,20 +2310,182 @@ function updateStudentView() {
     });
     const houseIcon = document.getElementById('student-house-icon');
     if (houseIcon) {
-        const icon = currentStudent.house === 'hades' ? '⚫' : currentStudent.house === 'ceres' ? '⚪' : '🏠';
-        houseIcon.innerHTML = securityUtils.html`<span class="text-2xl sm:text-3xl">${icon}</span>`;
+        // Use actual colors for house display (black = Hades, white = Ceres)
+        const houseColor = currentStudent.house === 'hades' ? 'bg-gray-900 border-2 border-gray-600' : 
+                          currentStudent.house === 'ceres' ? 'bg-white border-2 border-gray-300' : 
+                          'bg-gray-500 border-2 border-gray-400';
+        const houseName = currentStudent.house === 'hades' ? 'เฮเดส' : 
+                          currentStudent.house === 'ceres' ? 'เซเรส' : 'อื่นๆ';
+        houseIcon.className = `mx-auto w-16 h-16 sm:w-20 sm:h-20 ${houseColor} rounded-full flex items-center justify-center mb-3 sm:mb-4 shadow-lg`;
+        houseIcon.innerHTML = `<span class="text-xs font-bold ${currentStudent.house === 'ceres' ? 'text-gray-800' : 'text-white'}">${houseName}</span>`;
     }
-    const sortedStudents = [...students].sort((a, b) => (b.score || 0) - (a.score || 0));
+    
+    // Filter students by role for ranking
+    // Seniors (role === 'senior') compete with seniors only
+    // Juniors (all other roles: normal, medical, council) compete with juniors only
+    const isSenior = currentStudent.role === 'senior';
+    const sameRoleStudents = isSenior 
+        ? students.filter(s => s.role === 'senior')
+        : students.filter(s => s.role !== 'senior');
+    
+    const sortedStudents = [...sameRoleStudents].sort((a, b) => (b.score || 0) - (a.score || 0));
     const rank = sortedStudents.findIndex(s => s.__backendId === currentStudent.__backendId) + 1;
+    
+    const roleGroupName = isSenior ? 'รุ่นพี่' : 'รุ่นน้อง';
+    const roleIcon = isSenior ? '🎓' : '📚';
+    
     const rankElement = document.getElementById('student-rank');
     if (rankElement) {
         rankElement.innerHTML = securityUtils.html`
             <div class="text-center">
                 <p class="text-sm text-slate-400">อันดับที่</p>
                 <p class="text-2xl font-bold text-yellow-400">${rank}</p>
-                <p class="text-xs text-slate-500">จาก ${students.length} คน</p>
+                <p class="text-xs text-slate-500">จาก ${sameRoleStudents.length} คน</p>
             </div>
         `;
+    }
+}
+
+// Download student profile card as JPEG
+async function downloadStudentProfileAsJPEG() {
+    const section = document.getElementById('student-profile-card');
+    if (!section || !currentStudent) return;
+    
+    // Get all elements to hide during download
+    const hideElements = section.querySelectorAll('.hide-on-download');
+    
+    try {
+        // Hide elements before capture
+        hideElements.forEach(el => {
+            el.dataset.originalDisplay = el.style.display;
+            el.style.display = 'none';
+        });
+        
+        // Load html2canvas if not already loaded
+        if (typeof html2canvas === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            document.head.appendChild(script);
+            await new Promise(resolve => script.onload = resolve);
+        }
+        
+        // Fixed dimensions for consistent output
+        const fixedWidth = 400;
+        const fixedHeight = 350;
+        
+        const canvas = await html2canvas(section, {
+            backgroundColor: '#1f2937',
+            scale: 1,
+            useCORS: true,
+            logging: false,
+            allowTaint: true,
+            imageTimeout: 0,
+            onclone: function(clonedDoc) {
+                const clonedSection = clonedDoc.getElementById('student-profile-card');
+                if (clonedSection) {
+                    // Force standard fonts for all text elements
+                    clonedSection.style.fontFamily = 'Arial, Helvetica, sans-serif';
+                    clonedSection.style.width = fixedWidth + 'px';
+                    
+                    // Apply font to all text elements
+                    const allTextElements = clonedSection.querySelectorAll('*');
+                    allTextElements.forEach(el => {
+                        el.style.fontFamily = 'Arial, Helvetica, sans-serif';
+                        el.style.letterSpacing = 'normal';
+                        el.style.wordSpacing = 'normal';
+                    });
+                    
+                    // Hide download button in clone
+                    const hideInClone = clonedSection.querySelectorAll('.hide-on-download');
+                    hideInClone.forEach(el => el.style.display = 'none');
+                }
+            }
+        });
+        
+        const dateStr = new Date().toISOString().split('T')[0];
+        const studentName = currentStudent.first_name || 'student';
+        const roleStr = currentStudent.role === 'senior' ? 'รุ่นพี่' : 'รุ่นน้อง';
+        const filename = `คะแนน_${studentName}_${roleStr}_${dateStr}.jpg`;
+        
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/jpeg', 1.0);
+        link.click();
+    } catch (error) {
+        console.error('Error downloading JPEG:', error);
+        alert('ไม่สามารถดาวน์โหลดได้ กรุณาลองใหม่อีกครั้ง');
+    } finally {
+        // Restore hidden elements
+        hideElements.forEach(el => {
+            el.style.display = el.dataset.originalDisplay || '';
+        });
+    }
+}
+
+
+// Download class statistics as JPEG
+async function downloadClassStatisticsAsJPEG() {
+    const section = document.getElementById('class-statistics-card');
+    if (!section) return;
+    
+    // Get download button to hide
+    const hideElements = section.querySelectorAll('.hide-on-download');
+    
+    try {
+        // Hide elements before capture
+        hideElements.forEach(el => {
+            el.dataset.originalDisplay = el.style.display;
+            el.style.display = 'none';
+        });
+        
+        // Load html2canvas if not already loaded
+        if (typeof html2canvas === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            document.head.appendChild(script);
+            await new Promise(resolve => script.onload = resolve);
+        }
+        
+        const canvas = await html2canvas(section, {
+            backgroundColor: '#1f2937',
+            scale: 1,
+            useCORS: true,
+            logging: false,
+            allowTaint: true,
+            imageTimeout: 0,
+            onclone: function(clonedDoc) {
+                const clonedSection = clonedDoc.getElementById('class-statistics-card');
+                if (clonedSection) {
+                    clonedSection.style.fontFamily = 'Arial, Helvetica, sans-serif';
+                    
+                    const allTextElements = clonedSection.querySelectorAll('*');
+                    allTextElements.forEach(el => {
+                        el.style.fontFamily = 'Arial, Helvetica, sans-serif';
+                        el.style.letterSpacing = 'normal';
+                        el.style.wordSpacing = 'normal';
+                    });
+                    
+                    const hideInClone = clonedSection.querySelectorAll('.hide-on-download');
+                    hideInClone.forEach(el => el.style.display = 'none');
+                }
+            }
+        });
+        
+        const dateStr = new Date().toISOString().split('T')[0];
+        const filename = `สถิติของชั้น_${dateStr}.jpg`;
+        
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/jpeg', 1.0);
+        link.click();
+    } catch (error) {
+        console.error('Error downloading JPEG:', error);
+        alert('ไม่สามารถดาวน์โหลดได้ กรุณาลองใหม่อีกครั้ง');
+    } finally {
+        // Restore hidden elements
+        hideElements.forEach(el => {
+            el.style.display = el.dataset.originalDisplay || '';
+        });
     }
 }
 
