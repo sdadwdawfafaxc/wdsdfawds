@@ -1240,7 +1240,7 @@ async function downloadHighestLeaderboardAsJPEG() {
         
         const canvas = await html2canvas(section, {
             backgroundColor: '#1e293b',
-            scale: 1,
+            scale: 4,
             useCORS: true,
             logging: false,
             allowTaint: true,
@@ -1531,9 +1531,11 @@ async function downloadJuniorLeaderboardAsJPEG() {
         
         const canvas = await html2canvas(section, {
             backgroundColor: '#1e293b',
-            scale: 2,
+            scale: 4,
             useCORS: true,
-            logging: false
+            logging: false,
+            allowTaint: true,
+            imageTimeout: 0
         });
         
         const dateStr = new Date().toISOString().split('T')[0];
@@ -1543,7 +1545,7 @@ async function downloadJuniorLeaderboardAsJPEG() {
         
         const link = document.createElement('a');
         link.download = filename;
-        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.href = canvas.toDataURL('image/jpeg', 1.0);
         link.click();
     } catch (error) {
         console.error('Error downloading JPEG:', error);
@@ -1616,9 +1618,11 @@ async function downloadSeniorLeaderboardAsJPEG() {
         
         const canvas = await html2canvas(section, {
             backgroundColor: '#1e293b',
-            scale: 2,
+            scale: 4,
             useCORS: true,
-            logging: false
+            logging: false,
+            allowTaint: true,
+            imageTimeout: 0
         });
         
         const dateStr = new Date().toISOString().split('T')[0];
@@ -1628,7 +1632,7 @@ async function downloadSeniorLeaderboardAsJPEG() {
         
         const link = document.createElement('a');
         link.download = filename;
-        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.href = canvas.toDataURL('image/jpeg', 1.0);
         link.click();
     } catch (error) {
         console.error('Error downloading JPEG:', error);
@@ -2375,7 +2379,7 @@ async function downloadStudentProfileAsJPEG() {
         
         const canvas = await html2canvas(section, {
             backgroundColor: '#1f2937',
-            scale: 1,
+            scale: 4,
             useCORS: true,
             logging: false,
             allowTaint: true,
@@ -2448,7 +2452,7 @@ async function downloadClassStatisticsAsJPEG() {
         
         const canvas = await html2canvas(section, {
             backgroundColor: '#1f2937',
-            scale: 1,
+            scale: 4,
             useCORS: true,
             logging: false,
             allowTaint: true,
